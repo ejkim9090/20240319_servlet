@@ -1,0 +1,39 @@
+/* 폰트 */
+/* font 정하기 - family, size */
+
+
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1em;
+    line-height: 1.2em;
+}
+h1{
+    font-weight: 900;
+    font-size: 1.28em;
+    line-height: 1.3em;
+}
+h3{
+    font-weight: 900;
+    font-size: 1em;
+    line-height: 1.1em;
+}
+.noto-serif{
+    font-family: "Noto Serif KR", serif;
+    font-style: normal;
+}
+/* a 링크 */
+a {
+    text-decoration: none;
+    color: black;
+}
+/* 
+a:link {
+    color: aqua;
+}
+a:visited {
+    color: yellow;
+}
+a:active {
+    color: red;
+} 
+*/

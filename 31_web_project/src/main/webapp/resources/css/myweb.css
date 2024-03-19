@@ -1,0 +1,253 @@
+/* 작업 순서 */
+/* font 정하기 - family, size */
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.1em;
+    line-height: 1.2em;
+}
+
+.noto-serif{
+    font-family: "Noto Serif KR", serif;
+    font-style: normal;
+}
+h1{
+    font-weight: 900;
+    font-size: 1.28em;
+    line-height: 1.3em;
+}
+h3{
+    font-weight: 900;
+    font-size: 1em;
+    line-height: 1.1em;
+}
+
+/* 기본(최적) 해상도 - 960px */
+/* header */
+.wrap-header{
+    background-color: antiquewhite;
+
+    /* 자식elements(absoulte제외) 높이 정확히 계산함  */
+    /* overflow: hidden; */
+}
+header{
+    /* 1. 중앙정렬 */
+    width: 960px;
+    margin: 0 auto;
+
+    /* margin */
+    /* margin-bottom: 10px; */
+    padding-bottom: 10px;
+
+    /* position - 기준점relative - 자식 absoulte 있다면 height*/
+    position: relative;
+    height: 160px;
+}
+header nav.tnb{
+    /* position - 배치absolute */
+    position: absolute;
+    right: 0;
+}
+header nav.bnb{
+    /* position - 배치absolute */
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+header div.logo{
+    /* position - 배치absolute */
+    position: absolute;
+    left: 50px;
+    top:50px
+}
+
+
+
+
+
+.wrap-main{
+    /* 1. 중앙정렬 */
+    width: 960px;
+    margin: 0 auto;
+}
+section{
+    /* 2. float 배치 */
+    float: left;
+    width: 750px;
+
+    margin-right: 10px;
+}
+aside{
+    /* 2. float 배치 */
+    float: left;
+    width: 200px;
+
+    /* 테두리 */
+    border: 1px solid black;
+    box-sizing: border-box;
+
+}
+.wrap-footer{
+    /* 2. float 배치 */
+    clear: both;
+
+    /* article의 margin-bottom만큼 이동 배치 */
+/*     
+    position: relative;
+    top: -10px; 
+    */
+
+    background-color: blanchedalmond;
+}
+footer{
+    /* 1. 중앙정렬 */
+    width: 960px;
+    margin: 0 auto;
+
+    padding: 10px 0;
+}
+
+article{
+    /* 테두리 */
+    border: 1px solid black;
+    box-sizing: border-box;
+
+    padding: 10px;
+
+    margin-bottom: 10px;
+}
+/* 우선순위에서 article 보다 높음 */
+article:last-child{
+    margin-bottom: 0;
+}
+nav > ul{
+    /* float 의 부모노드 overflow hidden */
+    overflow: hidden;
+}
+nav > ul > li {
+    /* display: inline-block; li요소 사이줄바꿈으로 한칸띄워쓰기문제 */
+    /* float */
+    float: left;
+    /* padding: 5px;  내부 a 태그에 padding 넣기*/
+    /* padding: 5px; */
+    /* border: 1px solid black; */
+}
+nav > ul > li > a {
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+nav > ul > li:first-child > a {
+    border-left: 1px solid black;
+}
+nav.tnb > ul > li:first-child > a {
+    border-left: 1px solid black;
+    border-radius: 15px 0 0 15px;
+}
+nav.tnb > ul > li:last-child > a{
+    border-radius: 0 15px 15px 0;
+}
+nav.bnb > ul > li:first-child > a{
+    border-left: 1px solid black;
+    border-radius: 10px 0 0 10px;
+}
+nav.bnb > ul > li:last-child > a{
+    border-radius: 0 10px 10px 0;
+}
+
+nav.bnb, .logo {
+    /* float 의 동위노드에 clear */
+    clear: both;
+}
+
+nav a {
+    display: inline-block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+/* 
+a:link {
+    color: aqua;
+}
+a:visited {
+    color: yellow;
+}
+a:active {
+    color: red;
+} 
+*/
+
+nav a:hover {
+    color: white;
+    background-color: black;
+}
+
+.tab-item > ul > li > a > div:first-child{
+    /*  */
+    float: left;
+    width: 45px;
+    margin-right: 10px;
+}
+.tab-item > ul > li > a > div:last-child{
+    float: left;
+    width: 120px;
+}
+.tab-item > ul > li  {
+    padding: 10px;
+    clear: both;
+}
+.tab-item > ul > li   {
+    overflow: hidden;
+}
+
+input[type=radio] {
+    /* 공간차지없이 없는 요소 */
+    display: none;
+
+    /* 공간차지하면서 화면에서 안보이게 함 */
+    /* visibility: hidden; */
+}
+
+input[type=radio]:nth-of-type(1):checked {
+    height: 50px;
+    width: 50px;
+}
+input[type=radio]:nth-of-type(2):checked {
+    height: 50px;
+    width: 50px;
+}
+
+
+input[type=radio]:nth-of-type(1):checked 
+~ div:nth-of-type(1)
+{
+    display: block;
+}
+input[type=radio]:nth-of-type(1):checked 
+~ div:nth-of-type(2)
+{
+    display: none;
+}
+
+input[type=radio]:nth-of-type(2):checked 
+~ div:nth-of-type(1)
+{
+    display: none;
+}
+input[type=radio]:nth-of-type(2):checked 
+~ div:nth-of-type(2)
+{
+    display: block;
+}
+
+.tab-item > ul > li:nth-child(3n+1){
+    background-color: #eee;
+}
+.tab-item > ul > li:nth-child(3n+2){
+    background-color: #ccc;
+}
+.tab-item > ul > li:nth-child(3n){
+    background-color: #ddd;
+}
+
+

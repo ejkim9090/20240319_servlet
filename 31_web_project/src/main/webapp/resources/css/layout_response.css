@@ -1,0 +1,29 @@
+/*  */
+.wrap-header {
+    background-color: aliceblue;
+}
+/*  */
+.wrap-footer {
+    background-color: azure;
+
+    /* float - 동위 - 해제 */
+    clear: both;
+}
+.wrap-main {
+    background-color: #ffd;
+    /* float - 부모 height를 위해  */
+    overflow: hidden;
+
+    /* background-color 칠해지는 공간 */
+    padding: 10px 0;
+}
+.wrap-main > section{
+    /* float 왼쪽 배치 */
+    width: calc(100% - 210px); float: left;
+    /* width: calc(100vw - 210px); float: left; */
+    margin-right: 10px;
+}
+.wrap-main > aside{
+    /* float 왼쪽 배치 */
+    width: 200px; float: left;
+}

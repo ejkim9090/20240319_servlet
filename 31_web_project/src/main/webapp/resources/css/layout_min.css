@@ -1,0 +1,37 @@
+/*  */
+.wrap-header {
+    background-color: aliceblue;
+}
+.wrap-header>header {
+    /* 중앙 배치 */
+    width: 600px; margin: 0 auto;
+}
+
+/*  */
+.wrap-footer {
+    background-color: azure;
+
+    /* float - 동위 - 해제 */
+    /* clear: both; */
+}
+
+.wrap-footer>footer {
+    /* 중앙 배치 */
+    width: 600px; margin: 0 auto;
+}
+
+/*  */
+.wrap-main {
+    background-color: #ffd;
+    /* 중앙 배치 */
+    width: 600px; margin: 0 auto;
+}
+
+.wrap-main>section {
+    width: 600px;
+}
+
+.wrap-main>aside {
+    /* 중앙 배치 */
+    width: 400px; margin: 0 auto;
+}
