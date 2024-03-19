@@ -1,3 +1,8 @@
+.metadata/
+bin/
+properties/
+*.properties
+
 # Compiled class file
 *.class
 
