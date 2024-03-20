@@ -19,6 +19,7 @@ import kh.mclass.model.service.OpenApiService;
 @WebServlet("/openapi")
 public class OpenApiController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private OpenApiService service = new OpenApiService();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -32,18 +33,20 @@ public class OpenApiController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		OpenApiService service = new OpenApiService();
-//		List<OpenApiVo> result = service.getCtprvnRltmMesureDnsty();
-		Map<String, Object> result = service.getCtprvnRltmMesureDnstyByJson();
-		System.out.println(result);
+		request.getRequestDispatcher("/WEB-INF/views/semi/openapi.jsp").forward(request, response);
+
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String lawdCd = request.getParameter("lawdCd");
+		String dealYMD = request.getParameter("dealYMD");
+//		String fileDir = request.getSession().getServletContext().getRealPath("files");
+		String fileDir = "c:/workspace/files";
+		service.getCommonOpenApi(lawdCd, dealYMD, fileDir);
+		response.sendRedirect(request.getContextPath()+"/openapi");
 	}
 
 }
