@@ -18,20 +18,14 @@ function loadedHandler(){
 	// event 등록
     $("[type=button]").on("click", calcClickHandler);
     $('.c').on("blur", cntBlurHandler);
-    $('.c').hover(function(){
-    	$(this).addClass("on");
-    }, function(){
-    	$(this).removeClass("on");
-    });
-    
+    $('.c').on("keyup", cntBlurHandler);
 
     
 	// 확인용 test var elem = $("td"); console.log(elem);
 }
 function cntBlurHandler(e){
     // 메뉴마다 합계가격
-    $(this).parent().next().children('input.p').val(
-        $(this).parent().prev().text() * $(this).val()  );
+    $(this).parent().next().children('input.p').val( $(this).parent().prev().text() * $(this).val()  );
     updateTotal();
 }
 function calcClickHandler(e){
@@ -102,8 +96,7 @@ function updateTotal(){
 		</tr>
 		<tr>
 			<td>아메리카노</td>
-			<td><input type="text" value="2500" disabled="disabled"></td>
-
+			<td>2500</td>
 			<td><input type="text" name="c1" class="c in"></td>
 			<td><input type="text" name="c1Price" class="p" readonly></td>
 		</tr>
