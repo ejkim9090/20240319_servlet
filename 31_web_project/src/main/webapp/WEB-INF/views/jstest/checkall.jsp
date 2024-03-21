@@ -31,10 +31,11 @@ function loadedHandler(){
 	/* 1. 화면구성 */
 	var htmlValue='';	
 	for(var i=1; i<=itemCount; i++){
-		htmlValue+='<div>';
-		htmlValue+='	<label for="item-'+i+'">메뉴item-'+i+'</label>';
-		htmlValue+='<input type="checkbox" data-itemcode="'+i+'" id="item-'+i+'" class="item">';
-		htmlValue+='</div>';
+		htmlValue+=`
+		<div>
+			<label for="item-\${i}">메뉴item-\${i}</label><input type="checkbox" id="item-\${i}" data-itemcode="\${i}" class="item">
+		</div>
+		`;
 	}
 	$(".checkboxs").html(htmlValue);
 	
