@@ -1,6 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<section>
+<section class="section">
+	<article>
+        <div >
+            <h1>모달</h1>
+            <button type="button" class="btn modal">
+	            <img alt="aaa" src="">
+	            <span>x</span>
+	            <span>띄우기</span>
+            </button>
+            <div class="wrap-modal modal project write">
+            	<div class="modal-content modal  project write">
+	            	<div class="btn modal-close">x</div>
+					<div>
+		                fdsLorem!
+		            </div>
+		            <div>
+		                Lorem!
+		            </div>
+	            </div>
+            </div>
+        </div>
+    </article>
     <article>
         <div class="c-ellipsis">
             sdfsdfsdfsdfsdfdsfsdf
@@ -228,6 +249,41 @@
     <option value="f03">waltnet</option>
 </datalist>
 
-</section>
+<script>
+$(loadedHandler);
+function loadedHandler(){
+	// event 등록
+	$(".btn.modal").on("click", btnModalClickHandler);
+	$(".btn.modal-close").on("click", btnModalCloseClickHandler);
+	$(".wrap-modal").on("click", btnModalCloseClickHandler);
+}
 
-    
+function btnModalClickHandler(  ){
+	//console.log(e);
+	console.log(event);
+	console.log(event.target);
+	console.log(this);
+	$(".section .wrap-modal").css("display", "block");
+}
+function btnModalCloseClickHandler( e ){
+	console.log(e.target);
+	console.log(event.target);
+	console.log(this);  // .wrap-modal 항상
+	console.log(document.getElementsByClassName("wrap-modal")[0]);
+	console.log($(".section .wrap-modal").get(0));
+	if(
+//		(event.target == $(".section .wrap-modal").get(0))
+//	 || 
+	 	(event.target == $(".btn.modal-close").get(0))		
+	){
+		$(".section .wrap-modal").css("display", "none");
+	}
+	
+}
+
+
+
+
+</script>
+
+</section>
