@@ -24,13 +24,13 @@
 
     <!-- header 영역 style -->
     <link href="<%=request.getContextPath()%>/resources/css/header.css" rel="stylesheet">
-    <!-- section 영역 style -->
-    <link href="<%=request.getContextPath()%>/resources/css/home_section.css" rel="stylesheet">
     <!-- aside 영역 style -->
     <link href="<%=request.getContextPath()%>/resources/css/aside.css" rel="stylesheet">
     <!-- footer 영역 style -->
     <link href="<%=request.getContextPath()%>/resources/css/footer.css" rel="stylesheet">
  
+    <!-- section 영역 style -->
+    <link href="<%=request.getContextPath()%>/resources/css/home_section.css" rel="stylesheet">
 <%@ page language="java" contentType="text/html; charset=UTF-8"    pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -39,7 +39,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>화면설계-순서</title>
-
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <style>
         @import url("${pageContext.request.contextPath}/resources/css/layout.css") screen and (min-width:960px);
         @import url("${pageContext.request.contextPath}/resources/css/layout_response.css") screen and (min-width:801px) and (max-width:959px);
