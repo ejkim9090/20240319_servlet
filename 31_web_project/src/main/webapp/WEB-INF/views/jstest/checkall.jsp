@@ -17,6 +17,7 @@
 	} 
 	.checkedItems{
 	clear: both;
+	border: 1px solid black;
 	}
 	.checkboxs > div {
 	float:left;
@@ -96,7 +97,23 @@ function itemCheckHandler(){
 	}	
 	/* 9. checkedItems 에 이벤트발생 바로 그 item의 div를 제거 */
 	else {
+		console.log(this);
+		var checkedElement = this;
+		var $checkedElement = $(this);
 		
+		checkedElement.innerHTML = '';
+		$checkedElement.html('');
+		
+		$(".checkedItems").children().each(function(index, element){
+			console.log("this와 element 같음");
+			console.log($(this).data("itemcode"));
+			console.log($checkedElement.data("itemcode"));
+			if($(this).data("itemcode") == $checkedElement.data("itemcode")){
+				$(this).remove();
+				// for 문은 아니므로 break; 사용 불가.
+				return; 
+			}			
+		});
 	}
 	
 
@@ -124,12 +141,28 @@ function allCheckHandler(){
 	console.log($(this).attr("checked"));  // undefined
 	// prop() 메소드는 동적페이지 변화를 인지하고 그 결과값을 true/false로 줌.
 	console.log($(this).prop("checked"));  // true / false
-	
-	
 	console.log($(".item"));  // 10개 elements
 	
-	$(".item").prop("checked", $(this).prop("checked"));
-
+	
+	var allchecked = $(this).prop("checked");
+	
+	$(".item").prop("checked", allchecked);
+	
+	/* 10. 전체선택 처리 후 checkItems에도 전체 적용 */
+	if(allchecked){
+		$(".checkedItems").html("");
+		$(".item").each(function() {
+			var label = $(this).parent().children("label").html();
+			var htmlVal = '';
+			htmlVal +='<div data-itemcode="'+$(this).data("itemcode")+'">';
+			htmlVal +='	<span>'+label+'</span>';
+			htmlVal +='</div>';
+			$(".checkedItems").append(htmlVal);
+		});
+	}else {
+		$(".checkedItems").html("");
+	}
+	
 }
 </script>
 </head>
