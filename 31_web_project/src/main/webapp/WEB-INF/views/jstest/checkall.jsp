@@ -100,9 +100,9 @@ function itemCheckHandler(){
 		console.log(this);
 		var checkedElement = this;
 		var $checkedElement = $(this);
-		
-		checkedElement.innerHTML = '';
-		$checkedElement.html('');
+		//checkedElement.innerHTML = '';
+		//$를 넣으면 jQury형태의 this가 들어있구나라고 확인가능 
+		//$checkedElement.html('');
 		
 		$(".checkedItems").children().each(function(index, element){
 			console.log("this와 element 같음");
@@ -150,14 +150,21 @@ function allCheckHandler(){
 	
 	/* 10. 전체선택 처리 후 checkItems에도 전체 적용 */
 	if(allchecked){
-		$(".checkedItems").html("");
+		//$(".checkedItems").html("");
 		$(".item").each(function() {
-			var label = $(this).parent().children("label").html();
-			var htmlVal = '';
-			htmlVal +='<div data-itemcode="'+$(this).data("itemcode")+'">';
-			htmlVal +='	<span>'+label+'</span>';
-			htmlVal +='</div>';
-			$(".checkedItems").append(htmlVal);
+			// $(".checkedItems").children().each(function(){
+			//});
+			console.log("=====");
+			var temp = ".checkedItems > div[data-itemcode="+$(this).data("itemcode")+"]";
+			console.log($(temp).length);
+			if( !$(temp).length ){
+				var label = $(this).parent().children("label").html();
+				var htmlVal = '';
+				htmlVal +='<div data-itemcode="'+$(this).data("itemcode")+'">';
+				htmlVal +='	<span>'+label+'</span>';
+				htmlVal +='</div>';
+				$(".checkedItems").append(htmlVal);
+			}
 		});
 	}else {
 		$(".checkedItems").html("");
