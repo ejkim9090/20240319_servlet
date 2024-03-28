@@ -303,7 +303,11 @@ desc department;
 
 
 
-
+----- DDL 
+--- create table
+create table t1 ( birthday date, name varchar2(30) );
+comment on column t1.birthday is '생년월일';
+select * from t1;
 
 
 
@@ -317,7 +321,16 @@ SELECT EMP_NAME, SALARY, dept_code,
     TO_CHAR(TRUNC(RATIO_TO_REPORT(SALARY) OVER() * 20000000, 0), 'L00,999,999') "추가로 받게될 급여"
 FROM EMPLOYEE;
 
-    
+
+--ORA-00001: 무결성 제약 조건(KH.EMPLOYEE_PK)에 위배됩니다
+update employee
+    set emp_name='홍길동'
+--    set emp_id = 209
+--    where emp_name='홍길동'
+;
+select * from employee;
+rollback;
+delete from employee;
 
     
     

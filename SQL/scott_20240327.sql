@@ -276,3 +276,99 @@ FROM EMP;
 SELECT DEPTNO, ENAME, SAL
  , LAST_VALUE(ENAME) OVER (PARTITION BY DEPTNO ORDER BY SAL DESC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) as DEPT_RICH 
 FROM EMP;
+
+-----
+
+----- DDL 
+--- create table
+create table t1 ( birthday date, name varchar2(30) );
+comment on column t1.birthday is '생년월일';
+insert into t1 values ( sysdate, null );
+insert into t1 values ( null, null );
+drop table t1;
+create table t1 ( birthday date, name varchar2(30) not null );
+insert into t1 values ( sysdate, null );
+--ORA-01400: NULL을 ("SCOTT"."T1"."NAME") 안에 삽입할 수 없습니다
+insert into t1 values ( null, '홍길동');
+insert into t1 values ( null, '홍길동');
+drop table t1;
+create table t1 ( birthday date, name varchar2(30) unique );
+--ORA-00001: 무결성 제약 조건(SCOTT.SYS_C008440)에 위배됩니다
+insert into t1 values ( null, '홍길동');
+select * from user_constraints where constraint_name='SYS_C008440'; 
+insert into t1 values ( null, '홍길동2');
+select * from t1;
+drop table t1;
+create table t1 ( birthday date, name varchar2(30) unique
+            , gender char(1) check(gender in ('f','m')) );
+insert into t1 values ( null, '홍길동', 'a');
+--ORA-02290: 체크 제약조건(SCOTT.SYS_C008442)이 위배되었습니다
+-- 딕셔너리 확인
+select * from user_constraints where constraint_name='SYS_C008442'; 
+insert into t1 values ( null, '홍길동', 'f');
+
+drop table t1;
+create table t1 ( birthday date, name varchar2(30) primary key);
+insert into t1 values ( null, '홍길동');
+-- 딕셔너리 확인
+select * from user_constraints where constraint_name='SYS_C008474'; 
+select * from user_cons_columns where constraint_name='SYS_C008474';
+
+drop table t2;
+drop table t1;
+
+create table t1 ( birthday date, name varchar2(30) primary key);
+insert into t1 values ( null, '홍길동');
+insert into t1 values ( null, '홍길동2');
+create table t2 ( gender char(1) check(gender in ('m','f')) 
+                    , name varchar2(30) references t1(name) on delete set null );
+insert into t2 values (null, '홍홍홍'); --ORA-02291: 무결성 제약조건(SCOTT.SYS_C008476)이 위배되었습니다- 부모 키가 없습니다
+insert into t2 values (null, '홍길동');
+insert into t2 values (null, '홍길동2');
+insert into t2 values (null, '홍길동3');
+commit;
+
+--ORA-02292: 무결성 제약조건(SCOTT.SYS_C008476)이 위배되었습니다- 자식 레코드가 발견되었습니다
+--update t1 set name='홍길동3' where name='홍길동2';
+delete from t1 where name='홍길동2';
+
+
+create table t3 ( c1 number,
+            c2 number,
+            c3 number,
+            primary key(c2, c3)
+            );
+create table t4 ( c4 number,
+            c5 number,
+            c2 number,
+            c3 number,
+            foreign key (c2, c3) references t3(c2, c3)
+            );
+
+
+create table t5 ( c1 number primary key,
+               c2 number);
+insert into t5 values(10,1);
+
+create table t6 ( c1 number,
+               c2 number references t5(c1) );
+insert into t6 values(1,10);
+insert into t6 values(3,10);
+
+
+                    
+select * from t1;
+select * from t2;
+
+
+
+-------  oracle 의 성능이 우수한 이유 - 개인적 의견
+----- dictionary 딕셔너리 
+select * from user_constraints; 
+select * from user_tables;
+select * from user_indexes;
+select * from user_views;
+select * from user_sequences;
+
+
+
