@@ -224,24 +224,82 @@ SELECT DEPT_CODE, FLOOR(AVG(SALARY)) 평균
 -- 자동정렬, 대소자변경 ctrl f7
 -- 명령어 실행 ctrl enter
 
-SELECT DEPT_CODE, JOB_CODE, SUM(SALARY),
-CASE WHEN GROUPING(DEPT_CODE) = 0 AND 
-GROUPING(JOB_CODE) = 1 
-THEN '부서별 합계‘
-    WHEN GROUPING(dept_code) = 1
-         AND GROUPING(job_code) = 0 THEN
-        '직급별 합계'
-    WHEN GROUPING(dept_code) = 1
-         AND GROUPING(job_code) = 1 THEN
-        '총 합계'
+SELECT DEPT_CODE, JOB_CODE, floor(avg(SALARY)), count(*)
+FROM EMPLOYEE
+GROUP BY rollup(DEPT_CODE , JOB_CODE)
+ORDER BY 1;
+
+
+
+SELECT DEPT_CODE, JOB_CODE, sum(salary) FROM EMPLOYEE where job_code is not null and dept_code is not null
+GROUP BY rollup(DEPT_CODE , JOB_CODE) 
+union
+SELECT DEPT_CODE, JOB_CODE, sum(salary) FROM EMPLOYEE where job_code is not null and dept_code is not null
+GROUP BY rollup(JOB_CODE , DEPT_CODE) ORDER BY 1;
+SELECT DEPT_CODE, JOB_CODE, sum(salary) FROM EMPLOYEE where job_code is not null and dept_code is not null
+GROUP BY CUBE(JOB_CODE , DEPT_CODE) ORDER BY 1;
+
+SELECT DEPT_CODE, JOB_CODE
+,   decode( GROUPING(JOB_CODE) , 1 , decode(GROUPING(dept_code) , 1 , '총합', '부합') , decode(GROUPING(dept_code) , 1 , '직합', 'ㅌ') )a1
+, sum(salary) FROM EMPLOYEE
+GROUP BY CUBE(JOB_CODE , DEPT_CODE) ORDER BY 1;
+
+SELECT DEPT_CODE, JOB_CODE, 
+SUM(SALARY),
+CASE WHEN GROUPING(DEPT_CODE) = 0 AND  GROUPING(JOB_CODE) = 1    THEN '부서별 합계'
+    WHEN GROUPING(dept_code) = 1 AND GROUPING(job_code) = 0 THEN  '직급별 합계'
+    WHEN GROUPING(dept_code) = 1 AND GROUPING(job_code) = 1 THEN  '총 합계'
     ELSE
         '그룹별 합계'
-END AS 구분
-FROM
-    employee
-group by
-    cube(dept_code, job_code)
+    END AS 구분
+FROM    employee
+group by    cube(dept_code, job_code)
 order by 1;
+--ORA-30481: GROUPING 함수는 GROUP BY CUBE 또는 ROLLUP에만 제공됩니다
+--30481. 00000 -  "GROUPING function only supported with GROUP BY CUBE or ROLLUP"
+
+
+SELECT DEPT_CODE, JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY ROLLUP(DEPT_CODE, JOB_CODE)
+UNION
+--SELECT sysdate, JOB_CODE, SUM(SALARY)
+SELECT 'a', JOB_CODE, avg(SALARY)
+FROM EMPLOYEE
+GROUP BY ROLLUP(JOB_CODE)
+ORDER BY 4
+;
+--ORA-01789: 질의 블록은 부정확한 수의 결과 열을 가지고 있습니다.
+--01789. 00000 -  "query block has incorrect number of result columns"
+--ORA-01790: 대응하는 식과 같은 데이터 유형이어야 합니다
+--01790. 00000 -  "expression must have same datatype as corresponding expression"
+--ORA-01785: ORDER BY 항목은 SELECT 목록 식의 수라야 합니다
+--01785. 00000 -  "ORDER BY item must be the number of a SELECT-list expression
+
+SELECT DEPT_CODE, JOB_CODE, MANAGER_ID, FLOOR(AVG(SALARY))    FROM EMPLOYEE
+    GROUP BY GROUPING SETS((DEPT_CODE, JOB_CODE, MANAGER_ID),
+                        (DEPT_CODE, MANAGER_ID), 
+                        (JOB_CODE, MANAGER_ID))
+    ;
+SELECT DEPT_CODE, JOB_CODE, MANAGER_ID, FLOOR(AVG(SALARY))    FROM EMPLOYEE    GROUP BY (DEPT_CODE, JOB_CODE, MANAGER_ID)
+union
+SELECT DEPT_CODE, 'J', MANAGER_ID, FLOOR(AVG(SALARY))    FROM EMPLOYEE    GROUP BY (DEPT_CODE, MANAGER_ID)
+union
+SELECT 'D', JOB_CODE, MANAGER_ID, FLOOR(AVG(SALARY))    FROM EMPLOYEE    GROUP BY (JOB_CODE, MANAGER_ID);    
+    
+    
+---- 2024.03.28
+--- natural join  --- cross join
+select emp_id, emp_name, dept_title 
+    from employee 
+-- natural join 시 같은 이름의 컬럼이 없다면 cross join 처럼 동작함
+-- natural join 시 같은 이름의 컬럼이 있다면 (inner) join  using(컬럼명) 처럼 동작함.
+--        natural join department
+        cross join department
+    order by 1
+        ;
+desc employee;
+desc department;
 
 
 
@@ -252,3 +310,15 @@ order by 1;
 
 
 
+
+SELECT EMP_NAME, SALARY, dept_code,
+    LPAD(TRUNC(RATIO_TO_REPORT(SALARY) OVER() * 100, 0), 5) || ' %' 비율,
+    LPAD(TRUNC(RATIO_TO_REPORT(SALARY) OVER( partition by dept_code) * 100, 0), 5) || ' %' 부서별비율,
+    TO_CHAR(TRUNC(RATIO_TO_REPORT(SALARY) OVER() * 20000000, 0), 'L00,999,999') "추가로 받게될 급여"
+FROM EMPLOYEE;
+
+    
+
+    
+    
+    
