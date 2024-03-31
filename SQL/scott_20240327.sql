@@ -360,15 +360,52 @@ insert into t6 values(3,10);
 select * from t1;
 select * from t2;
 
+drop table t7;
+create table t7 (
+    c1 number constraint t7_pk_c1 primary key,
+    c2 number constraint t7_nn_c2 not null,
+    c3 number constraint t7_uk_c3 unique,
+    c4 number constraint t7_fk_c4 references dept
+);
+
+
+create table emp_copy
+    as select * from emp;
+select * from emp_copy;
+create table emp_copy2
+    as select * from emp where 1<>1;
+select * from emp_copy2;
+-- 검색 기능에 많이 쓰임
+select * from emp where 1<>0;
+select * from emp where 1<>1;
+
+
+delete from emp_copy;
+rollback;
+truncate TABLE emp_copy;
+
+select * from emp_copy where 1<>0 and comm>3000 and deptno>20;
+
+desc dept;
+
+
 
 
 -------  oracle 의 성능이 우수한 이유 - 개인적 의견
 ----- dictionary 딕셔너리 
 select * from user_constraints; 
+select * from user_cons_columns;
 select * from user_tables;
 select * from user_indexes;
 select * from user_views;
 select * from user_sequences;
 
 
+select * --grade, e.ename
+from emp e
+join salgrade s on e.sal between s.losal and s.hisal
+where 
+    e.sal between (select avg(e2.sal)*0.9 from emp e2 join salgrade s1 on e2.sal between s1.losal and s1.hisal where grade = s.grade)
+    and (select avg(e3.sal)*1.1 from emp e3 join salgrade s2 on e3.sal between s2.losal and s2.hisal  where grade = s.grade)
+;
 

@@ -333,5 +333,107 @@ rollback;
 delete from employee;
 
     
-    
-    
+
+---- 2024.03.29
+--- DDL TABLE
+CREATE TABLE EMPLOYEE_COPY
+    AS SELECT EMP_ID, EMP_NAME, DEPT_TITLE, NATIONAL_NAME
+    FROM EMPLOYEE
+    LEFT JOIN DEPARTMENT ON(DEPT_ID = DEPT_CODE)
+    LEFT JOIN LOCATION ON(LOCATION_ID = LOCAL_CODE)
+    LEFT JOIN NATIONAL USING(NATIONAL_CODE);
+select * from EMPLOYEE_COPY;
+--- DDL VIEW
+CREATE or replace VIEW V_EMPLOYEE
+    AS SELECT EMP_ID, EMP_NAME, salary, DEPT_TITLE, NATIONAL_NAME
+    FROM EMPLOYEE
+    LEFT JOIN DEPARTMENT ON(DEPT_ID = DEPT_CODE)
+    LEFT JOIN LOCATION ON(LOCATION_ID = LOCAL_CODE)
+    LEFT JOIN NATIONAL USING(NATIONAL_CODE);
+--ORA-01031: 권한이 불충분합니다
+--01031. 00000 -  "insufficient privileges"
+-- sys로 접속해서 grant create view to scott, kh, kh2;
+
+select * from V_EMPLOYEE;
+--ORA-00955: 기존의 객체가 이름을 사용하고 있습니다.
+--00955. 00000 -  "name is already used by an existing object"
+
+desc employee;
+insert into employee values('999', '홍길동','000329-4123456','a@a.a','01011112222','D9','J1','1',3000000, null, '207', sysdate, null, 'N');
+--SQL 오류: ORA-00947: 값의 수가 충분하지 않습니다
+--00947. 00000 -  "not enough values"
+select * from V_EMPLOYEE order by emp_id desc;
+insert into V_EMPLOYEE values ( '998', '홍길순',3000000,'' );
+
+create force view v_test
+    as select * from employeeeeeee
+;
+
+select * from user_views;
+drop view v_test;
+
+
+
+select emp_id
+    from employee 
+--    join
+--    where local_name  like 'ASIA%'
+    where dept_code in ( select dept_id
+                            from location
+                                join department  on location_id = local_code
+                            where local_name  like 'ASIA%'
+                        )
+;
+select * from department;
+select * from location;
+select * from national;
+
+
+-- insert
+INSERT INTO EMPLOYEE (EMP_NAME, EMP_ID, EMP_NO, DEPT_CODE,
+                    JOB_CODE, SAL_LEVEL, SALARY, BONUS, MANAGER_ID )
+VALUES('장채현', 997, '901123-1080503', 'D1', 'J8',
+                'S3', 4300000, 0.2, '200');
+select * from employee_copy;
+insert into employee_copy (select emp_id, emp_name, dept_code, job_code from employee);
+
+delete from employee_copy where 1=1;
+create table employee_copy2 as select * from employee where 1=0;
+delete from employee_copy2 where 1=1;
+
+select * from employee_copy2;
+insert into employee_copy2 (select * from employee);
+
+CREATE TABLE EMP_DEPT_D1
+AS SELECT EMP_ID, EMP_NAME, DEPT_CODE, HIRE_DATE
+FROM EMPLOYEE
+WHERE 1 = 0;
+CREATE TABLE EMP_MANAGER
+AS SELECT EMP_ID, EMP_NAME, MANAGER_ID
+FROM EMPLOYEE
+WHERE 1 = 0;
+
+INSERT ALL
+    INTO EMP_DEPT_D1 VALUES(a, b, DEPT_CODE, HIRE_DATE)
+    INTO EMP_MANAGER VALUES(a, b, MANAGER_ID)
+SELECT EMP_ID a, EMP_NAME b, DEPT_CODE, HIRE_DATE, MANAGER_ID FROM EMPLOYEE  WHERE DEPT_CODE = 'D1';
+select * from EMP_DEPT_D1;
+select * from EMP_MANAGER;
+INSERT ALL
+    INTO EMP_DEPT_D1 VALUES('996', '홍길동', 'D9', sysdate)
+    INTO EMP_MANAGER VALUES('996', '홍길동', '998')
+SELECT * from dual;
+
+INSERT ALL
+    INTO EMP_DEPT_D1 VALUES(a , b, 'D9', c)
+    INTO EMP_MANAGER VALUES(a, b, '998')
+SELECT '996' as a, '홍길동' as b , sysdate as c from dual;
+
+
+
+-- 컬1 in (값1, 값2,.. )
+-- exists (select * from employee sq where sq.c1 = mq.c1)
+
+
+
+
