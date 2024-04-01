@@ -85,6 +85,7 @@ select * FROM TB_STUDENT;
 --05_03_SELECT(Option)_
 
 -- 05_03_SELECT(Option)_18
+-- 국어국문학과에서 총 평점이 가장 높은 학생의 이름과 학번을 표시하시오
 SELECT STUDENT_NO, STUDENT_NAME
 FROM TB_STUDENT
      JOIN TB_DEPARTMENT USING(DEPARTMENT_NO)
@@ -136,5 +137,22 @@ FROM (SELECT STUDENT_NO, STUDENT_NAME, AVG(POINT)
 WHERE ROWNUM = 1;
 
 
-
+-- 국어국문학과에서 총 평점이 가장 높은 학생의 이름과 학번을 표시하시오
+select tb2.*, rownum
+from 
+(
+SELECT 
+--*
+STUDENT_NO, STUDENT_NAME, avg(point) avg
+ from (select * from tb_student where department_no = (SELECT DEPARTMENT_NO
+                                                 FROM TB_DEPARTMENT
+                                                 WHERE DEPARTMENT_NAME = '국어국문학과') ) tb1 
+    left join TB_GRADE using (STUDENT_NO)
+ group by student_no, STUDENT_NAME
+ order by avg desc
+ ) tb2
+where rownum=1
+    ;
+    
+    
 
