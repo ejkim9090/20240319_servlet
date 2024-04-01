@@ -409,3 +409,56 @@ where
     and (select avg(e3.sal)*1.1 from emp e3 join salgrade s2 on e3.sal between s2.losal and s2.hisal  where grade = s.grade)
 ;
 
+
+select * from user_tables;
+select * from user_views;
+select * from user_constraints;
+select * from user_cons_columns;
+create table t8 (
+    c1 varchar2(10),
+    c2 nvarchar2(10),
+    c3 char(10),
+    c4 nchar(10)
+);
+insert into t8 values ('1234567890','1234567890','1234567890','1234567890');
+insert into t8 values ('123456789가','123456789가','123456789가','123456789가');
+--ORA-12899: "SCOTT"."T8"."C1" 열에 대한 값이 너무 큼(실제: 12, 최대값: 10)
+insert into t8 values ('1234567가','123456789가','123456789가','123456789가');
+--ORA-12899: "SCOTT"."T8"."C3" 열에 대한 값이 너무 큼(실제: 12, 최대값: 10)
+insert into t8 values ('1234567가','123456789가','1234567가','123456789가');
+-- OK
+insert into t8 values ('1234567가','가나다라마바사아자차','1234567가','가나다라마바사아자차');
+-- OK
+insert into t8 values ('1234567가','가나다라마바사아자ab','1234567가','가나다라마바사아자차');
+insert into t8 values ('1234567가','가나다라마','1234567가','가나다라마');
+insert into t8 values ('1234567가','가나다라마','1234567','가나다라마');
+select * from t8
+    where  1=1
+--    and c2 = '가나다라마'
+--    and c4 = '가나다라마     '
+--    and c3='1234567'
+    and c3='1234567   '
+;
+create table t13 (
+    c1 varchar2(4000),
+    c2 nvarchar2(2000),
+    c3 char(2000),
+    c4 nchar(1000)
+);
+--*Cause:    for datatypes CHAR and RAW, the length specified was > 2000;
+--           otherwise, the length specified was > 4000.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
