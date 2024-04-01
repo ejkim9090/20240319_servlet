@@ -448,11 +448,24 @@ create table t13 (
 --*Cause:    for datatypes CHAR and RAW, the length specified was > 2000;
 --           otherwise, the length specified was > 4000.
 
+create unique index idx_t13 on t13(c1);
+create index idx_t13 on t13(c2);
+
+insert into t13 values ('12345672','123456789가','1234567가','123456789가');
+select * from user_indexes;
+select * from user_ind_columns;
+select * from t13 where c3='123';  -- 안빨라짐
+select * from t13 where c1='123';  -- index걸린 컬럼으로 비교문 빨라짐
+select * from t13 where c2='123';  -- index걸린 컬럼으로 비교문 빨라짐
+select * from t13 order by c3;  -- 안빨라짐
 
 
+select emp.*, sal*12+nvl(comm,0) as 연봉 from emp where sal*12+nvl(comm,0) > 1200;
+create index idx_emp_sal_func on emp (sal*12+nvl(comm,0));
 
+select * from emp where deptno > 20;  -- deptno 에 index걸려있고 --   emp 튜플 100개, select 튜플 15 미만정도일떄 효과적임
 
-
+SELECT SYSTIMESTAMP FROM DUAL;
 
 
 
