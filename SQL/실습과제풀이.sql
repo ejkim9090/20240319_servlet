@@ -50,17 +50,39 @@ alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
 
 
 --05-02(function)-13. 학과 별 휴학생 수를 파악하고자 한다. 학과 번호와 휴학생 수를 표시하는 SQL 문장을 작성하시오. 
-select  department_no
+select  department_no, count( decode(absence_yn, 'Y', absence_yn, null ) ) cnt
+            , count( decode(absence_yn, 'Y', 99 ) ) cnt_simple
     from tb_student
-    where absence_yn = 'Y'
-    
+    --where absence_yn = 'Y'
+    group by department_no
+    order by department_no
     ;
 
 
+--05-02(function)- 14. 춘 대학교에 다니는 동명이인(同名異人) 학생들의 이름을 찾고자 한다. 어떤 SQL 문장을 사용하면 가능하겠는가? 
+select b.student_name, b.동명이인 
+    from (select b.student_name, count(*) as 동명이인 from tb_student b
+                group by student_name) b
+    where b.동명이인 >= 2;
+
+--
+--11. 학생이름, 학과이름, 담당교수이름으로 VIEW 구성
+-- 지도교수가 없는 학생이 있을수 있음을 고려하기
+-- SELECT 만 할 경우 학과별로 정렬되어 화면에 보여지게 하기
+CREATE or replace VIEW VW_OFFICEHOUR AS 
+SELECT S.STUDENT_NAME, D.DEPARTMENT_NAME, P.PROFESSOR_NAME
+    FROM TB_STUDENT S
+        JOIN TB_DEPARTMENT D ON D.DEPARTMENT_NO = S.DEPARTMENT_NO
+        left outer JOIN TB_PROFESSOR P ON P.PROFESSOR_NO = S.COACH_PROFESSOR_NO
+    order by DEPARTMENT_NAME
+    ;
+
+select * from VW_OFFICEHOUR;
+select * FROM TB_STUDENT;
+    
 
 
-
-
+--05_실습_SQL03_SELECT(Option)
 
 
 
