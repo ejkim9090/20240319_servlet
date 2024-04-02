@@ -206,6 +206,14 @@ select * from department;
 select * from tb_student where student_no = 'A112113';
 select * from tb_grade where student_no = 'A112113';
 
+
+SELECT SUBSTR(TERM_NO, 1, 4) 년도, SUBSTR(TERM_NO, 5, 2) 학기, ROUND(AVG(POINT), 1) 평균
+FROM TB_GRADE
+WHERE STUDENT_NO = 'A112113'
+GROUP BY ROLLUP(SUBSTR(TERM_NO, 1, 4), SUBSTR(TERM_NO, 5, 2))
+ORDER BY 1; 
+
+
 select nvl(년도, ' ') 년도, nvl(학기, ' ') , avg_point from (
 select  decode( grouping(substr(term_no, 1,4)) , 1, '',substr(term_no, 1,4)) 년도,
         decode( grouping(substr(term_no, 5,2)) , 1, '',substr(term_no, 5,2)) 학기 , 
@@ -217,14 +225,14 @@ select  decode( grouping(substr(term_no, 1,4)) , 1, '',substr(term_no, 1,4)) 년
     ) tb1
 ;
 
-select nvl(년도, ' ') 년도, nvl(학기, ' ') , avg_point from (
+select decode(년도, '집계', ' ', 년도 ) 년도, decode(학기, '집계', ' ', 학기 ) 학기, avg_point from (
     select  decode( grouping(substr(term_no, 1,4)) , 1, '집계',substr(term_no, 1,4)) 년도,
             decode( grouping(substr(term_no, 5,2)) , 1, '집계',substr(term_no, 5,2)) 학기 , 
             round(avg(point),1) avg_point
         from tb_grade 
         where student_no = 'A112113'
         group by rollup( (substr(term_no, 1,4)) , (substr(term_no, 5,2)) )
-        order by null
+        order by 1, 2
     ) tb1
 ;
 select '' c1, 'null' c2 from dual;
@@ -233,3 +241,50 @@ select '' c1, 'null' c2 from dual;
 --오라클에서는 ''(empty string) 과 NULL 은 동일합니다.
 --하지만 PostgreSQL 에서는 '' 은 절대 NULL 이 아닙니다.
 insert into tb_grade values('' ,'A112113','',5.0);
+
+
+
+-- 05-04(DML)-15
+SELECT 과목번호, 과목이름, "누적수강생수(명)"
+FROM (SELECT CLASS_NO 과목번호, CLASS_NAME 과목이름, COUNT(*) "누적수강생수(명)"
+      FROM TB_GRADE
+           JOIN TB_CLASS USING(CLASS_NO)
+      WHERE TERM_NO LIKE '2009%'
+            OR TERM_NO LIKE '2008%'
+            OR TERM_NO LIKE '2007%'
+            OR TERM_NO LIKE '2006%'
+            OR TERM_NO LIKE '2005%'
+      GROUP BY CLASS_NO, CLASS_NAME
+      ORDER BY 3 DESC)
+WHERE ROWNUM <= 3;
+--- 최근 3년간, cnt 많은 3등까지
+select class_no, class_name, cnt 
+    from (
+        select rownum rn, class_no, cnt  from (
+            select class_no, count(*) cnt from tb_grade
+            --  최근3년
+                where substr(term_no,1,4) in 
+                (select uq_term curr_term 
+                    from (select rownum rn, uq_term 
+                            from (select distinct substr(term_no,1,4) uq_term 
+                                    from tb_grade  order by uq_term desc)
+                          ) tb1 where rn <= 3
+                )
+                group by class_no
+                order by cnt desc 
+        ) 
+    ) tb1
+   join tb_class using (class_no)
+   -- cnt 많은 3등까지
+where rn <= 3;
+
+select count(*) from tb_grade;
+select count(*) from tb_student;
+select count(*) from tb_student where absence_yn='Y';
+
+
+
+
+
+
+
