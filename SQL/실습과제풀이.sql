@@ -72,8 +72,8 @@ select b.student_name, b.동명이인
 CREATE or replace VIEW VW_OFFICEHOUR AS 
 SELECT S.STUDENT_NAME, D.DEPARTMENT_NAME, P.PROFESSOR_NAME
     FROM TB_STUDENT S
-        JOIN TB_DEPARTMENT D ON D.DEPARTMENT_NO = S.DEPARTMENT_NO
         left outer JOIN TB_PROFESSOR P ON P.PROFESSOR_NO = S.COACH_PROFESSOR_NO
+        JOIN TB_DEPARTMENT D ON D.DEPARTMENT_NO = S.DEPARTMENT_NO
     order by DEPARTMENT_NAME
     ;
 
@@ -125,34 +125,111 @@ FROM (SELECT STUDENT_NO, STUDENT_NAME, AVG(POINT)
       ORDER BY AVG(POINT) DESC)
 WHERE ROWNUM = 1;
 
-SELECT STUDENT_NO, STUDENT_NAME
-FROM (SELECT STUDENT_NO, STUDENT_NAME, AVG(POINT)
-      FROM TB_GRADE
-           JOIN TB_STUDENT USING(STUDENT_NO)
-      WHERE DEPARTMENT_NO = (SELECT DEPARTMENT_NO
-                             FROM TB_DEPARTMENT
-                             WHERE DEPARTMENT_NAME = '국어국문학과')
-      GROUP BY STUDENT_NO, STUDENT_NAME
-      ORDER BY AVG(POINT) DESC)
-WHERE ROWNUM = 1;
+--05_03_SELECT(Option)
+--9. 8번의 결과 중 ‘인문사회’ 계열에 속한 과목의 교수 이름을 찾으려고 한다. 이에 해당하는 과목 이름과 교수 이름을 출력하는 SQL 문을 작성하시오.
+select class_name, professor_name
+    from tb_class tc
+        join tb_class_professor tcp using (class_no)
+        join tb_professor tp using(professor_no)
+    where tc.department_no in (select department_no 
+                    from tb_department
+                    where category='인문사회')
+--    order by class_name
+;
+select class_name, professor_name
+    from tb_class tc
+        join tb_class_professor tcp using (class_no)
+        join tb_professor tp using(professor_no)
+        join tb_department td on (tc.department_no = td.department_no)
+    where category='인문사회'
+;
 
 
--- 국어국문학과에서 총 평점이 가장 높은 학생의 이름과 학번을 표시하시오
-select tb2.*, rownum
-from 
-(
-SELECT 
---*
-STUDENT_NO, STUDENT_NAME, avg(point) avg
- from (select * from tb_student where department_no = (SELECT DEPARTMENT_NO
-                                                 FROM TB_DEPARTMENT
-                                                 WHERE DEPARTMENT_NAME = '국어국문학과') ) tb1 
-    left join TB_GRADE using (STUDENT_NO)
- group by student_no, STUDENT_NAME
- order by avg desc
- ) tb2
-where rownum=1
-    ;
-    
-    
+--02_KH_25. EMPLOYEE테이블에서 직원들의 입사일로부터 년도만 가지고 각 년도별 입사 인원수 조회
+--전체 직원 수, 2001년, 2002년, 2003년, 2004년
+select count(*) 전체직원수 
+    ,  count( decode( extract(year from hire_date), '2001', 0, null  ) ) "2001년"
+    ,  count( decode( extract(year from hire_date), '2002', 0, null  ) )  "2002년"
+    ,  count( decode( extract(year from hire_date), '2003', 0, null  ) )  "2003년"
+    ,  count( decode( extract(year from hire_date), '2004', 0, null  ) )  "2004년"
+    from employee
+;
+select count(*) from employee where extract(year from hire_date) = '2001'
+;
+select count( decode( extract(year from hire_date), '2001', 0, null  ) ) from employee
+;
+select extract(year from hire_date)  from employee;
+select *     from employee;
 
+
+--04_KH_8. 한 사원과 같은 부서에서 일하는 사원의 이름 조회
+select t1.emp_name, t1.dept_code, t2.emp_name
+    from employee t1
+        join employee t2 on (t1.dept_code = t2.dept_code)
+    where t1.emp_name <> t2.emp_name
+    order by t1.emp_name, t2.emp_name
+;
+--04_KH_11. 부서 별 급여 합계가 전체 급여 총 합의 20%보다 많은 부서의 부서 명, 부서 별 급여 합계 조회
+--11-1. JOIN과 HAVING 사용
+--11-2. 인라인 뷰 사용
+--11-3. WITH 사용
+select dept_title , sum(salary)
+    from employee e
+        join department d on (e.dept_code=d.dept_id)
+    group by dept_title
+    having sum(salary) > any( select sum(salary)*0.2 from employee) 
+;
+select dept_title , sum(salary)
+    from ( select dept_title, salary from employee e join department d on (e.dept_code=d.dept_id)) t1
+    group by dept_title
+    having sum(salary) > any( select sum(salary)*0.2 from employee) 
+;
+select dept_title , sum_sal
+    from ( select dept_title, sum(salary) sum_sal
+            from employee e join department d on (e.dept_code=d.dept_id)
+            group by dept_title
+        ) t1
+    where sum_sal > any( select sum(salary)*0.2 from employee) 
+;
+with t1 as ( select dept_title, sum(salary) sum_sal
+                from employee e join department d on (e.dept_code=d.dept_id)
+                group by dept_title
+            ) 
+select dept_title, sum_sal from t1 where sum_sal > any( select sum(salary)*0.2 from employee)
+;
+select * from department;
+
+
+--05_02(Function)-15.
+--학번이 A112113 인 김고은 학생의 년도, 학기 별 평점과 년도 별 누적 평점, 
+--총평점을 SQL 문을 작성하시오.(단, 평점은 소수점 1 자리까지만 반올림하여 표시한다.)
+select * from tb_student where student_no = 'A112113';
+select * from tb_grade where student_no = 'A112113';
+
+select nvl(년도, ' ') 년도, nvl(학기, ' ') , avg_point from (
+select  decode( grouping(substr(term_no, 1,4)) , 1, '',substr(term_no, 1,4)) 년도,
+        decode( grouping(substr(term_no, 5,2)) , 1, '',substr(term_no, 5,2)) 학기 , 
+        round(avg(point),1) avg_point
+    from tb_grade 
+    where student_no = 'A112113'
+    group by rollup( (substr(term_no, 1,4)) , (substr(term_no, 5,2)) )
+    order by 1 nulls last
+    ) tb1
+;
+
+select nvl(년도, ' ') 년도, nvl(학기, ' ') , avg_point from (
+    select  decode( grouping(substr(term_no, 1,4)) , 1, '집계',substr(term_no, 1,4)) 년도,
+            decode( grouping(substr(term_no, 5,2)) , 1, '집계',substr(term_no, 5,2)) 학기 , 
+            round(avg(point),1) avg_point
+        from tb_grade 
+        where student_no = 'A112113'
+        group by rollup( (substr(term_no, 1,4)) , (substr(term_no, 5,2)) )
+        order by null
+    ) tb1
+;
+select '' c1, 'null' c2 from dual;
+-- oracle은 Empty string 을 지원하지 않음. 
+-- Oracle empty string converts to null.
+--오라클에서는 ''(empty string) 과 NULL 은 동일합니다.
+--하지만 PostgreSQL 에서는 '' 은 절대 NULL 이 아닙니다.
+insert into tb_grade values('' ,'A112113','',5.0);
