@@ -467,11 +467,40 @@ select * from emp where deptno > 20;  -- deptno 에 index걸려있고 --   emp �
 
 SELECT SYSTIMESTAMP FROM DUAL;
 
+desc dept;
+select * from dept;
+insert into dept values ( (select nvl(max(deptno),0)+1 from dept)   , 'KH','SEOUL' );
+create sequence seq_dept_deptno start with 78;
+insert into dept values ( seq_dept_deptno.nextval  , 'KH','서울' );
+
+select seq_dept_deptno.nextval from dual;
+select seq_dept_deptno.currval from dual;
+
+create sequence seq_dept_deptno start with 78;
+alter sequence seq_dept_deptno maxvalue 99 cycle ;
+drop sequence seq_dept_deptno;
+create sequence seq_dept_deptno start with 70
+                                maxvalue 99 cycle;
+select * from user_sequences;
+delete from dept where deptno > 69;
+select * from dept;
+select * from emp;
+insert into dept values ( seq_dept_deptno.nextval  , 'KH','서울' );
+insert all
+    into dept values(seq_dept_deptno.nextval  , 'KH','서울')
+    into emp (empno,ename,deptno) values(9999,'홍길동',seq_dept_deptno.nextval )
+select * from dual;
+--insert all
+--    into emp (empno,ename,deptno) values(9999,'홍길동',  c1)
+--    into dept values(  c1 , 'KH','서울')
+--select seq_dept_deptno.nextval c1 from dual;
+--SQL 오류: ORA-02287: 시퀀스 번호는 이 위치에 사용할 수 없습니다
+--02287. 00000 -  "sequence number not allowed here"
 
 
+insert all
+    into dept values(  c1 , 'KH','서울')
+    into emp (empno,ename,deptno) values(9999,'홍길동',  c1)
+select nvl(max(deptno),0)+1 c1 from dept;
 
-
-
-
-
-
+desc emp;
