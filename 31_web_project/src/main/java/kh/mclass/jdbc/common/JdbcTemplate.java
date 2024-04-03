@@ -13,6 +13,31 @@ public class JdbcTemplate {
 	private JdbcTemplate() {}
 	
 	// static 메소드로 만들기
+	public static Connection getSemiConnection(boolean isLocalhost) {
+		Connection conn = null;
+		Properties prop = new Properties();
+		try {
+			String currentPath = JdbcTemplate.class.getResource("./").getPath(); 
+			prop.load(new FileReader(currentPath+"driver.properties"));
+			Class.forName(prop.getProperty("jdbc.driver"));
+			if(isLocalhost) {
+				conn = DriverManager.getConnection(prop.getProperty("jdbc.url")
+						, prop.getProperty("jdbc.semi.username")
+						, prop.getProperty("jdbc.semi.password"));
+			} else {
+				conn = DriverManager.getConnection(prop.getProperty("jdbc.semi.dbserver.url")	
+						, prop.getProperty("jdbc.semi.username")
+						, prop.getProperty("jdbc.semi.password"));
+			}
+			if(conn != null) System.out.println("연결성공"); else System.out.println("연결실패!!!!!!!!!");
+			//conn.setAutoCommit(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
+	
 	public static Connection getConnection() {
 		Connection conn = null;
 		Properties prop = new Properties();
