@@ -5,7 +5,7 @@ CREATE TABLE DEPT
 	LOC VARCHAR2(13) ) ;
 DROP TABLE EMP;
 CREATE TABLE EMP
-   (EMPNO NUMBER(4),
+   (EMPNO NUMBER(4) constraint pk_emp  PRIMARY KEY,
 	ENAME VARCHAR2(10),
 	JOB VARCHAR2(9),
 	MGR NUMBER(4),
@@ -71,6 +71,6 @@ COMMIT;
 SET TERMOUT ON
 SET ECHO ON
 
-select * from emp;
-alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
-select * from dept;
+--select * from emp;
+--alter session set nls_date_format='yyyy-mm-dd hh24:mi:ss';
+--select * from dept;
