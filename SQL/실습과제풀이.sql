@@ -225,7 +225,7 @@ select  decode( grouping(substr(term_no, 1,4)) , 1, '',substr(term_no, 1,4)) 년
     ) tb1
 ;
 
-select decode(년도, '집계', ' ', 년도 ) 년도, decode(학기, '집계', ' ', 학기 ) 학기, avg_point from (
+select decode(년도, '집계', '', 년도 ) 년도, decode(학기, '집계', ' ', 학기 ) 학기, avg_point from (
     select  decode( grouping(substr(term_no, 1,4)) , 1, '집계',substr(term_no, 1,4)) 년도,
             decode( grouping(substr(term_no, 5,2)) , 1, '집계',substr(term_no, 5,2)) 학기 , 
             round(avg(point),1) avg_point
@@ -235,11 +235,12 @@ select decode(년도, '집계', ' ', 년도 ) 년도, decode(학기, '집계', '
         order by 1, 2
     ) tb1
 ;
-select '' c1, 'null' c2 from dual;
+select '' c1 from dual;
 -- oracle은 Empty string 을 지원하지 않음. 
 -- Oracle empty string converts to null.
 --오라클에서는 ''(empty string) 과 NULL 은 동일합니다.
 --하지만 PostgreSQL 에서는 '' 은 절대 NULL 이 아닙니다.
+
 insert into tb_grade values('' ,'A112113','',5.0);
 
 
