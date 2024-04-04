@@ -1,22 +1,20 @@
 package kh.mclass.semim.member.model.dto;
 
-public class MemberDto {
+public class MemberLoginDto {
 //	MEMBER
 //	MEM_ID    NOT NULL VARCHAR2(20)  
 //	MEM_PWD   NOT NULL VARCHAR2(20)  
 //	MEM_EMAIL NOT NULL VARCHAR2(100) 
 	private String memId;
 	private String memPwd;
-	private String memEmail;
 	@Override
 	public String toString() {
-		return "MemberDto [memId=" + memId + ", memPwd=" + memPwd + ", memEmail=" + memEmail + "]";
+		return "MemberDto [memId=" + memId + ", memPwd=" + memPwd +"]";
 	}
-	public MemberDto(String memId, String memPwd, String memEmail) {
+	public MemberLoginDto(String memId, String memPwd) {
 		super();
 		this.memId = memId;
 		this.memPwd = memPwd;
-		this.memEmail = memEmail;
 	}
 
 	public String getMemId() {
@@ -24,9 +22,6 @@ public class MemberDto {
 	}
 	public String getMemPwd() {
 		return memPwd;
-	}
-	public String getMemEmail() {
-		return memEmail;
 	}
 	
 }

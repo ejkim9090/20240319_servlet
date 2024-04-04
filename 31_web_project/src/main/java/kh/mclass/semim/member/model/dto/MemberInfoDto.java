@@ -1,32 +1,26 @@
 package kh.mclass.semim.member.model.dto;
 
-public class MemberDto {
+public class MemberInfoDto {
 //	MEMBER
 //	MEM_ID    NOT NULL VARCHAR2(20)  
 //	MEM_PWD   NOT NULL VARCHAR2(20)  
 //	MEM_EMAIL NOT NULL VARCHAR2(100) 
 	private String memId;
-	private String memPwd;
 	private String memEmail;
 	@Override
 	public String toString() {
-		return "MemberDto [memId=" + memId + ", memPwd=" + memPwd + ", memEmail=" + memEmail + "]";
+		return "MemberDto [memId=" + memId + ", memEmail=" + memEmail + "]";
 	}
-	public MemberDto(String memId, String memPwd, String memEmail) {
+	public MemberInfoDto(String memId, String memEmail) {
 		super();
 		this.memId = memId;
-		this.memPwd = memPwd;
 		this.memEmail = memEmail;
 	}
 
 	public String getMemId() {
 		return memId;
 	}
-	public String getMemPwd() {
-		return memPwd;
-	}
 	public String getMemEmail() {
 		return memEmail;
 	}
-	
 }

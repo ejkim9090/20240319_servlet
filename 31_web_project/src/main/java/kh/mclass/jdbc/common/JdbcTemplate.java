@@ -21,7 +21,7 @@ public class JdbcTemplate {
 			prop.load(new FileReader(currentPath+"driver.properties"));
 			Class.forName(prop.getProperty("jdbc.driver"));
 			if(isLocalhost) {
-				conn = DriverManager.getConnection(prop.getProperty("jdbc.url")
+				conn = DriverManager.getConnection(prop.getProperty("jdbc.semi.localhost.url")
 						, prop.getProperty("jdbc.semi.username")
 						, prop.getProperty("jdbc.semi.password"));
 			} else {
