@@ -264,9 +264,41 @@ desc member;
 desc board_reply;
 desc board;
 
+select * from BOARD_REPLY order by board_id;
 
+variable vtablename varchar2;
+exec pro_create_table('EJ', :vtablename);
+PRINT vtablename;
 
+select * from user_tables;
+SELECT * FROM LOG_EJ_20240404;
+/
+create or replace procedure pro_create_table( p_user_id in varchar2, p_table_name out varchar2 )
+is
+    v_dbdate varchar2(10);
+    v_createtablesql VARCHAR2(100);
+    v_cursor INTEGER;
+begin
+    -- sysdate를 얻어옴
+    SELECT TO_CHAR(SYSDATE,'RRRRMMDD')
+    INTO v_dbdate
+    FROM dual;
 
+    -- table명 조합하기
+    p_table_name := 'LOG_'||p_user_id||'_'||v_dbdate;
+    
+    -- CREATE TABLE명령어 생성
+    v_createtablesql := 'CREATE TABLE ' || p_table_name || ' (c1 number, c2 varchar2(10))';
+    
+    --CREATE TABLE명령어 화면에 출력  
+    DBMS_OUTPUT.PUT_LINE(v_createtablesql);
+    
+    -- 테이블 생성
+    v_cursor := DBMS_SQL.OPEN_CURSOR;  
+    DBMS_SQL.PARSE(v_cursor, v_createtablesql, dbms_sql.v7);
+    DBMS_SQL.CLOSE_CURSOR(v_cursor);
+end;
+/
 
 
 
