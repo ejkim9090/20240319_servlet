@@ -11,8 +11,36 @@ import static kh.mclass.jdbc.common.JdbcTemplate.close;
 import kh.mclass.semim.member.model.dto.MemberDto;
 
 public class MemberDao {
+	// select one
+	public int selectCheckId(Connection conn, String memId) {
+		int result = 0;
+		String sql = "SELECT COUNT(*) c  FROM MEMBER WHERE MEM_ID=?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			// ? 처리
+			pstmt.setString(1, memId);
+			rs = pstmt.executeQuery();
+			// ResetSet처리
+			if(rs.next()) {
+				result = rs.getInt("c");
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(rs);
+		close(pstmt);
+		return result;
+	}
+	
+	
+	
+	
+	
 	// select list - all
 	public List<MemberDto> selectAllList(Connection conn) {
+		System.out.println("MemberDao selectAllList");
 		List<MemberDto> result = null;
 		String sql = "SELECT MEM_ID,MEM_PWD,MEM_EMAIL    FROM MEMBER";
 		PreparedStatement pstmt = null;
@@ -34,6 +62,7 @@ public class MemberDao {
 		}
 		close(rs);
 		close(pstmt);
+		System.out.println("MemberDao selectAllList : "+ result);
 		return result;
 	}
 	// select one
