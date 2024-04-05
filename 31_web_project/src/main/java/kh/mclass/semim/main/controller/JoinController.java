@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import kh.mclass.semim.member.model.dto.MemberDto;
+import kh.mclass.semim.member.model.service.MemberService;
+
 /**
  * Servlet implementation class JoinController
  */
@@ -32,8 +35,33 @@ public class JoinController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String memId = request.getParameter("id");
+		String memPwd = request.getParameter("pwd");
+		String memEmail = request.getParameter("email");
+		MemberDto dto = new MemberDto(memId, memPwd, memEmail);
+		int result = new MemberService().insert(dto);
+		if(result < 0 ) {
+			// 회원가입실패시
+			// TODO
+			response.sendRedirect(request.getContextPath()+"/main");
+			return;
+		}
+		// 회원가입정상
+		response.sendRedirect(request.getContextPath()+"/login");
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
