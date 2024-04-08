@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import kh.mclass.semim.member.model.dto.MemberInfoDto;
 import kh.mclass.semim.member.model.dto.MemberLoginDto;
+import kh.mclass.semim.member.model.service.MemberService;
 
 /**
  * Servlet implementation class LoginController
@@ -41,11 +43,20 @@ public class LoginController extends HttpServlet {
 		System.out.println("/login doPost dto: "+ dto);
 //		/login doPost dto: MemberDto [memId=aaa, memPwd=bbb]
 
-		// TODO login
 		// ajax
 		// 성공 : 1
 		// 실패 : 0
-		int result = 1;
+		int result = 0;
+		// session 에 저장해 다닐 값에 따라 
+		//int result = new MemberService().login(dto);
+		MemberInfoDto resultInfo = new MemberService().loginGetInfo(dto);
+		
+		if(resultInfo != null) {
+			//성공
+//			request.getSession().setAttribute("sssLogin", id);
+			request.getSession().setAttribute("sssLogin", resultInfo);
+			result = 1;
+		}
 		response.getWriter().append(String.valueOf(result));
 	}
 
