@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import kh.mclass.semim.member.model.dto.MemberLoginDto;
+
 /**
  * Servlet implementation class LoginController
  */
@@ -33,8 +35,34 @@ public class LoginController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String id = request.getParameter("id");
+		String pwd = request.getParameter("pwd");
+		MemberLoginDto dto = new MemberLoginDto(id, pwd);
+		System.out.println("/login doPost dto: "+ dto);
+//		/login doPost dto: MemberDto [memId=aaa, memPwd=bbb]
+
+		// TODO login
+		// ajax
+		// 성공 : 1
+		// 실패 : 0
+		int result = 1;
+		response.getWriter().append(String.valueOf(result));
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
