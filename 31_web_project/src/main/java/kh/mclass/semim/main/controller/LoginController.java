@@ -17,6 +17,7 @@ import kh.mclass.semim.member.model.service.MemberService;
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private MemberService service = new MemberService();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -48,8 +49,8 @@ public class LoginController extends HttpServlet {
 		// 실패 : 0
 		int result = 0;
 		// session 에 저장해 다닐 값에 따라 
-		//int result = new MemberService().login(dto);
-		MemberInfoDto resultInfo = new MemberService().loginGetInfo(dto);
+		//int result = service.login(dto);
+		MemberInfoDto resultInfo = service.loginGetInfo(dto);
 		
 		if(resultInfo != null) {
 			//성공

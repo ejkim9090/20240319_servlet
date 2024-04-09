@@ -33,7 +33,7 @@ public class CheckIdController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("###checkid doPost 진입");
+		System.out.println("###checkid  doPost 진입");
 		String k1 = request.getParameter("k1");
 		String k2 = request.getParameter("k2");
 		System.out.println(k1+","+k2);

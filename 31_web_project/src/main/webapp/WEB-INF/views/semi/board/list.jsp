@@ -9,6 +9,6 @@
 </head>
 <body>
 <h1>Semim Board List</h1>
-
-</body>
+[[${dtolist }]] <br>
+[[<%=request.getAttribute("dtolist") %>]]
 </html>

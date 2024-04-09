@@ -10,12 +10,13 @@ import java.util.List;
 import static kh.mclass.jdbc.common.JdbcTemplate.close;
 
 import kh.mclass.semim.board.model.dto.BoardDto;
+import kh.mclass.semim.board.model.dto.BoardListDto;
 
 public class BoardDao {
 	// select list - all
-	public List<BoardDto> selectAllList(Connection conn) {
-		List<BoardDto> result = null;
-		String sql = "SELECT BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD";
+	public List<BoardListDto> selectAllList(Connection conn) {
+		List<BoardListDto> result = null;
+		String sql = "SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -24,11 +25,11 @@ public class BoardDao {
 			rs = pstmt.executeQuery();
 			// ResetSet처리
 			if(rs.next()) {
-				result = new ArrayList<BoardDto>();
+				result = new ArrayList<BoardListDto>();
 				do {
-					BoardDto dto = new BoardDto(	
-							rs.getInt("BOARD_ID"),rs.getString("SUBJECT"),rs.getString("CONTENT"),
-							rs.getString("WRITE_TIME"),rs.getString("LOG_IP"),rs.getString("BOARD_WRITER"),
+					BoardListDto dto = new BoardListDto(	
+							rs.getInt("BOARD_ID"),rs.getString("SUBJECT"),
+							rs.getString("WRITE_TIME"),rs.getString("BOARD_WRITER"),
 							rs.getInt("READ_COUNT")
 							);
 					result.add(dto);

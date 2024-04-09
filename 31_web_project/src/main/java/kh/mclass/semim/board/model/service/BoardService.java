@@ -7,13 +7,14 @@ import java.util.List;
 
 import kh.mclass.semim.board.model.dao.BoardDao;
 import kh.mclass.semim.board.model.dto.BoardDto;
+import kh.mclass.semim.board.model.dto.BoardListDto;
 
 public class BoardService {
 	private BoardDao dao = new BoardDao(); 
 	
 	// select list - all
-	public List<BoardDto> selectAllList() {
-		List<BoardDto> result = null;
+	public List<BoardListDto> selectAllList() {
+		List<BoardListDto> result = null;
 		Connection conn = getSemiConnection(true);
 		result = dao.selectAllList(conn);
 		close(conn);
