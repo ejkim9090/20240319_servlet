@@ -33,9 +33,10 @@ public class BoardService {
 	public int insert(BoardInsertDto dto) {
 		int result = 0;
 		Connection conn = getSemiConnection(true);
-		result = dao.insert(conn, dto);
+		int sequencNum = dao.getSequenceNum(conn);
+		result = dao.insert(conn, dto, sequencNum);
 		close(conn);
-		return result;
+		return sequencNum;
 	}
 	// update
 	public int update(BoardDto dto) {

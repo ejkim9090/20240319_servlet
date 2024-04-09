@@ -52,7 +52,7 @@ public class BoardWriteController extends HttpServlet {
 		System.out.println(content);
 //		BoardInsertDto dto = new BoardInsertDto(subject, content, memberInfoDto.getMemId());
 		BoardInsertDto dto = new BoardInsertDto(subject, content, "kh1");  //TODO
-		int result = service.insert(dto);
-		resp.sendRedirect(req.getContextPath()+"/board/list");
+		int sequenceNum = service.insert(dto);
+		resp.sendRedirect(req.getContextPath()+"/board/list?num="+sequenceNum);
 	}
 }

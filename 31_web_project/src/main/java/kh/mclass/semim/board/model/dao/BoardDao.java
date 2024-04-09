@@ -69,21 +69,45 @@ public class BoardDao {
 		close(pstmt);
 		return result;
 	}
+	
+	// select 
+	public int getSequenceNum(Connection conn) {
+		int result = 0;
+		String sql = "SELECT SEQ_BOARD_ID.nextval FROM DUAL";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			// ? 처리
+			rs = pstmt.executeQuery();
+			// ResetSet처리
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(rs);
+		close(pstmt);
+		return result;
+	}
+	
 	// insert
-	public int insert(Connection conn, BoardInsertDto dto) {
+	public int insert(Connection conn, BoardInsertDto dto, int sequencNum) {
 		int result = 0;
 //		INSERT INTO BOARD VALUES (SEQ_BOARD_ID.nextval, '제목1', '내용1', default, '127.0.0.1', 'kh1', default);
 		String sql = "INSERT INTO BOARD (BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT)"
-				+ " VALUES (SEQ_BOARD_ID.nextval, ?, ?, default, ?, ?, default)";
+				+ " VALUES (?, ?, ?, default, ?, ?, default)";
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
 			// ? 처리
-			pstmt.setString(1, dto.getSubject());
-			pstmt.setString(2, dto.getContent());
-//			pstmt.setString(3, dto.getLogIp());
-			pstmt.setString(3, null);
-			pstmt.setString(4, dto.getBoardWriter());
+			pstmt.setInt(1, sequencNum);
+			pstmt.setString(2, dto.getSubject());
+			pstmt.setString(3, dto.getContent());
+//			pstmt.setString(4, dto.getLogIp());
+			pstmt.setString(4, null);
+			pstmt.setString(5, dto.getBoardWriter());
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
