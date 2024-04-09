@@ -7,6 +7,7 @@ import java.util.List;
 
 import kh.mclass.semim.board.model.dao.BoardDao;
 import kh.mclass.semim.board.model.dto.BoardDto;
+import kh.mclass.semim.board.model.dto.BoardInsertDto;
 import kh.mclass.semim.board.model.dto.BoardListDto;
 
 public class BoardService {
@@ -29,7 +30,7 @@ public class BoardService {
 		return result;
 	}
 	// insert
-	public int insert(BoardDto dto) {
+	public int insert(BoardInsertDto dto) {
 		int result = 0;
 		Connection conn = getSemiConnection(true);
 		result = dao.insert(conn, dto);

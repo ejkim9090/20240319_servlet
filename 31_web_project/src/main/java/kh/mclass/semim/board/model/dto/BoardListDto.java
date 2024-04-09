@@ -3,7 +3,7 @@ package kh.mclass.semim.board.model.dto;
 import java.util.List;
 
 public class BoardListDto {
-//	BOARD_ID     NOT NULL NUMBER         
+//	BOARD_ID     NOT NULL NUMBER
 //	SUBJECT      NOT NULL VARCHAR2(120)  
 //	CONTENT      NOT NULL VARCHAR2(4000) 
 //	WRITE_TIME   NOT NULL TIMESTAMP(6)   
