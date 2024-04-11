@@ -14,6 +14,66 @@ import kh.mclass.semim.board.model.dto.BoardInsertDto;
 import kh.mclass.semim.board.model.dto.BoardListDto;
 
 public class BoardDao {
+	
+	// select total Count
+	public int selectTotalCount(Connection conn) {
+		int result = 0;
+		String sql = "select count(*) cnt from board";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			// ? 처리
+			rs = pstmt.executeQuery();
+			// ResetSet처리
+			if(rs.next()) {
+				result = rs.getInt("cnt");
+			}	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(rs);
+		close(pstmt);
+		return result;
+	}
+	// select list - all
+	public List<BoardListDto> selectPageList(Connection conn, int start, int end) {
+		List<BoardListDto> result = null;
+		String sql = "select t2.*"
+				+"   from (select t1.*, rownum rn" 
+			    +"       from (SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD order by board_id desc) t1 ) t2"
+			    +"   where rn between ?   and ?"
+			    ;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			// ? 처리
+			pstmt.setInt(1, start);//한페이지당글수*(현재페이지-1)+1
+			pstmt.setInt(2, end);//한페이지당글수*(현재페이지)
+			rs = pstmt.executeQuery();
+			// ResetSet처리
+			if(rs.next()) {
+				result = new ArrayList<BoardListDto>();
+				do {
+					BoardListDto dto = new BoardListDto(	
+							rs.getInt("BOARD_ID"),rs.getString("SUBJECT"),
+							rs.getString("WRITE_TIME"),rs.getString("BOARD_WRITER"),
+							rs.getInt("READ_COUNT")
+							);
+					result.add(dto);
+				}while (rs.next());
+			}	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(rs);
+		close(pstmt);
+		return result;
+	}
+	
+	
+	
 	// select list - all
 	public List<BoardListDto> selectAllList(Connection conn) {
 		List<BoardListDto> result = null;
