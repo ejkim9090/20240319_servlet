@@ -12,6 +12,8 @@
 <form id="frm-write">
 	<div><label>제목</label><input type="text" name="subject" required></div>
 	<div><label>내용</label><textarea name="content" required>여기여기</textarea></div>
+	<div><button type="button" class="btn file">파일추가</button></div>
+	
 	<div><button type="button" class="btn write" >글쓰기</button></div>
 </form>
 
@@ -20,6 +22,18 @@ $(loadedHandler);
 function loadedHandler(){
 	//event 등록
 	$(".btn.write").on("click", btnWriteClickHandler);
+	$(".btn.file").on("click", btnFileClickHandler);
+}
+function btnFileClickHandler(){
+	var htmlVal =`<div><input type="file" name="uploadfiles" required><button type="button" class="btn file-cancle">취소</button></div> `;
+	$(this).parent().after(htmlVal);
+	$(".btn.file-cancle").off("click");
+	$(".btn.file-cancle").on("click", btnFileCancleClickHandler);
+}
+function btnFileCancleClickHandler(){
+	console.log("btnFileCancleClickHandler");
+	$(this).parent().remove();
+	
 }
 function btnWriteClickHandler(){
 	
@@ -44,6 +58,7 @@ function btnWriteClickHandler(){
 	var frm = document.getElementById("frm-write");
 	frm.method="post";  // content 길이 길거라..
 	frm.action = "${pageContext.request.contextPath}/board/write";
+	frm.enctype="multipart/form-data";  // form 태그 내부에 input type="file"이 있다면
 	frm.submit();	
 }
 </script>
