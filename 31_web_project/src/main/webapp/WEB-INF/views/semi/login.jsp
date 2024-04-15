@@ -38,7 +38,7 @@ function frmClickHandler(){
 	console.log("클릭");
 	//console.log(document.getElementById("frm-login").serialize());
 	console.log($("#frm-login").serialize()); // query string 형태로 만들어줌.// id=sss&pwd=vvv
-	//{id : $("[name=id]").val() , pwd : $("[name=pwd]").val()  }	
+	//{id : $("#frm-login [name=id]").val() , pwd : $("#frm-login [name=pwd]").val()  }	
 	//$("#frm-login").serialize()
 	$.ajax({
 		url:"${pageContext.request.contextPath }/login"

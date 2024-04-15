@@ -11,6 +11,9 @@ import kh.mclass.semim.board.model.dao.BoardDao;
 import kh.mclass.semim.board.model.dto.BoardDto;
 import kh.mclass.semim.board.model.dto.BoardInsertDto;
 import kh.mclass.semim.board.model.dto.BoardListDto;
+import kh.mclass.semim.board.model.dto.BoardReadDto;
+import kh.mclass.semim.board.model.dto.BoardReplyListDto;
+import kh.mclass.semim.board.model.dto.BoardReplyWriteDto;
 
 public class BoardService {
 	private BoardDao dao = new BoardDao(); 
@@ -65,6 +68,15 @@ public class BoardService {
 	}
 	
 	
+	// select list - board reply
+	public List<BoardReplyListDto> selectBoardReplyList(Integer boardId) {
+		List<BoardReplyListDto> result = null;
+		Connection conn = getSemiConnection(true);
+		result = dao.selectBoardReplyList(conn, boardId);
+		close(conn);
+		return result;
+	}
+	
 	// select list - all
 	public List<BoardListDto> selectAllList() {
 		List<BoardListDto> result = null;
@@ -74,10 +86,40 @@ public class BoardService {
 		return result;
 	}
 	// select one
-	public BoardDto selectOne(Integer boardId) {
-		BoardDto result = null;
+	public BoardReadDto selectOne(Integer boardId) {
+		BoardReadDto result = null;
 		Connection conn = getSemiConnection(true);
 		result = dao.selectOne(conn, boardId);
+		if(result != null) {
+			dao.updateReadCount(conn, boardId);
+		}
+		List<BoardReplyListDto> replylist = dao.selectBoardReplyList(conn, boardId);	
+		result.setReplydtolist(replylist);
+		close(conn);
+		return result;
+	}
+	
+	
+	
+	// insert - boardreply
+	public int insertReply(BoardReplyWriteDto dto) {
+		int result = 0;
+		int resultupdate = 0;
+		Connection conn = getSemiConnection(true);
+		autoCommit(conn, false);
+		if(dto.getBoardReplyId() != 0) {
+			resultupdate = dao.updateReplyStep(conn, dto.getBoardReplyId());
+			if(resultupdate > -1) {
+				result = dao.insertRReply(conn, dto);
+			}
+		} else {
+			result = dao.insertReply(conn, dto);
+		}
+		if(resultupdate > -1 && result > 0) {
+			commit(conn);
+		}else {
+			rollback(conn);
+		}
 		close(conn);
 		return result;
 	}
