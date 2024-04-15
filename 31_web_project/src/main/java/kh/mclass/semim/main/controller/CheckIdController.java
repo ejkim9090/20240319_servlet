@@ -18,7 +18,7 @@ import kh.mclass.semim.member.model.service.MemberService;
 /**
  * Servlet implementation class CheckIdController
  */
-@WebServlet("/checkid")
+@WebServlet("/checkid.ajax")
 public class CheckIdController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

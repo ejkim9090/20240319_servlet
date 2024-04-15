@@ -31,14 +31,15 @@ function loadedHandler(){
 function btnCheckidClickHandler(){
 	var idVal = $("[name=id]").val();
 	$.ajax( { 
-		url : "${pageContext.request.contextPath }/checkid"
+		async : false, 
+		url : "${pageContext.request.contextPath }/checkid.ajax"
 		,method : "post"
 		,data : { cid : $("[name=id]").val(), k1:"v1", k2:"v2" }
 		///////////// contentType 은 data의 자료형
 		
 		///////////// dataType은 success의 result 의 자료형
 //		,dataType : "json"
-		,success : function(result){
+		,success : function(result){ 
 			console.log(result);
 			if(result > 0){
 				alert("사용불가!! 다른아이디를 사용해주세요.");
