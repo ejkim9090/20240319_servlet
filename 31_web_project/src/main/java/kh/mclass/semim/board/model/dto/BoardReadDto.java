@@ -17,14 +17,14 @@ public class BoardReadDto {
 	private String logIp;
 	private String boardWriter;
 	private Integer readCount;
-	private List<BoardReplyListDto> replydtolist;
+//	private List<BoardReplyListDto> replydtolist;
 	
 
 	@Override
 	public String toString() {
 		return "BoardReadDto [boardId=" + boardId + ", subject=" + subject + ", content=" + content + ", writeTime="
 				+ writeTime + ", logIp=" + logIp + ", boardWriter=" + boardWriter + ", readCount=" + readCount
-				+ ", replydtolist=" + replydtolist + "]";
+				+  "]";
 	}
 	public BoardReadDto(Integer boardId, String subject, String content, String writeTime, String logIp, String boardWriter,
 			Integer readCount) {
@@ -61,12 +61,7 @@ public class BoardReadDto {
 	public Integer getReadCount() {
 		return readCount;
 	}
-	public List<BoardReplyListDto> getReplydtolist() {
-		return replydtolist;
-	}
-	public void setReplydtolist(List<BoardReplyListDto> replydtolist) {
-		this.replydtolist = replydtolist;
-	}
+	
 	
 	
 }

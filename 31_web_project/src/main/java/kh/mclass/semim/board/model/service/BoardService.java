@@ -93,8 +93,9 @@ public class BoardService {
 		if(result != null) {
 			dao.updateReadCount(conn, boardId);
 		}
-		List<BoardReplyListDto> replylist = dao.selectBoardReplyList(conn, boardId);	
-		result.setReplydtolist(replylist);
+		// ajax 대체
+//		List<BoardReplyListDto> replylist = dao.selectBoardReplyList(conn, boardId);	
+//		result.setReplydtolist(replylist);
 		close(conn);
 		return result;
 	}

@@ -73,6 +73,7 @@
 		</form>
 	</div>
 	<div class="reply-wrap">
+	<%-- 
 		<c:forEach items="${dto.replydtolist }" var="replydto">
 			<form class="frm-rreply">
 			<input type="hidden" name="boardId" value="${dto.boardId }">
@@ -85,11 +86,12 @@
 				<div>${replydto.boardReplyContent }</div>
 				<div>${replydto.boardReplyWriteTime }</div>
 				<div>${replydto.boardReplyWriter }</div>
-				<div><button type="button" class="btn show rreplycontent">ㄷㄷ글</button></div>
+				<div><button type="button" class="btn show rreplycontent">ㄷㄷ작성</button></div>
 				<div class="rreplycontent span" ><input type="text" name="boardReplyContent" ><button type="button" class="btn rreplay" >등록</button> </div>
 			</div>
 			</form>
 		</c:forEach>
+	 --%>
 	</div>
 </div>
 <script>
@@ -98,7 +100,21 @@ function loadedHandler(){
 	//event 등록
 	$(".btn.replay").on("click", btnReplyClickHandler);
 	$(".btn.rreplay").on("click", btnRReplyClickHandler);
-	$(".btn.rreplycontent.show").on("click", btnRReplyContentClickHandler);
+
+	//$(".btn.rreplycontent.show").on("click", btnRReplyContentClickHandler);
+	// displayReplyWrap()을수행 ajax
+	$.ajax({
+		url: "${pageContext.request.contextPath }/board/reply/read.ajax"
+		,method:"post"
+		,error : ajaxErrorHandler
+		,data: {boardId:"${dto.boardId }"}
+		,dataType:"json"
+		,success: function(result){
+			console.log(result);
+			displayReplyWrap(result);
+		}
+	});
+	
 }
 function btnRReplyClickHandler(){
 	//Login 페이지로 이동
@@ -166,6 +182,31 @@ function btnReplyClickHandler(){
 		}
 	});
 }
+
+function btnRReplyContentClickHandler(){
+/*
+	$(".btn.rreplycontent.show").each(function(){
+		if($(this).text() == "취소"){
+			$(this).text("ㄷㄷ글");
+		}
+	});
+ */	
+	if($(this).text() == "ㄷㄷ글"){
+		$(this).text("취소");	
+	}else {
+		$(this).text("ㄷㄷ글");
+	}
+	//$(".boardreply.grid .rreplycontent.span").show();
+	//$(this).parent().next().show();
+	$(this).parent().next().toggle();
+
+	
+}
+
+
+
+
+
 function displayReplyWrap(datalist){
 	console.log("${dto.boardId }");
 	var htmlVal = '';
@@ -194,27 +235,6 @@ function displayReplyWrap(datalist){
 	// event 다시 등록
 	$(".btn.rreplycontent.show").on("click", btnRReplyContentClickHandler);
 	$(".btn.rreplay").on("click", btnRReplyClickHandler);
-}
-
-
-function btnRReplyContentClickHandler(){
-/*
-	$(".btn.rreplycontent.show").each(function(){
-		if($(this).text() == "취소"){
-			$(this).text("ㄷㄷ글");
-		}
-	});
- */	
-	if($(this).text() == "ㄷㄷ글"){
-		$(this).text("취소");	
-	}else {
-		$(this).text("ㄷㄷ글");
-	}
-	//$(".boardreply.grid .rreplycontent.span").show();
-	//$(this).parent().next().show();
-	$(this).parent().next().toggle();
-
-	
 }
 </script>
 </html>
