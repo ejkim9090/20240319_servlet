@@ -89,14 +89,14 @@ public class BoardWriteController extends HttpServlet {
 			String fileName = multiReq.getFilesystemName(name);  // 서버에 저장된 파일이름
 			String orginFileName = multiReq.getOriginalFileName(name);
 			String type = multiReq.getContentType(name);  // 전송된 파일의 타입
-			System.out.println(type);
+//			System.out.println(type);
 			File f1= multiReq.getFile(name);  // name을 이용해서 파일 객체 생성 여부 확인 작업.
 			if (f1==null) {  // name을 이용해서 파일 객체 생성에 실패하면
 				System.out.println("파일 업로드 실패");   // 실패 오류메시지  
 			} else {
-				System.out.println(f1.length());   // 그 파일의 크기 
+//				System.out.println(f1.length());   // 그 파일의 크기 
 			}
-			System.out.println(name + "  :  "+ fileName+"  :  "+orginFileName);
+//			System.out.println(name + "  :  "+ fileName+"  :  "+orginFileName);
 //			uploadfiles: SQL실습과제5.jpg : SQL실습과제.jpg
 //			uploadfiles_0: t7.PNG : t.PNG
 //			uploadfiles_1: 캡처6.PNG : 캡처.PNG
@@ -107,11 +107,12 @@ public class BoardWriteController extends HttpServlet {
 		String subject = multiReq.getParameter("subject");
 		String content = multiReq.getParameter("content");
 		MemberInfoDto memberInfoDto = (MemberInfoDto)req.getSession().getAttribute("sssLogin"); 
-		System.out.println(subject);
-		System.out.println(content);
+//		System.out.println(subject);
+//		System.out.println(content);
 //		BoardInsertDto dto = new BoardInsertDto(subject, content, memberInfoDto.getMemId());
 		BoardInsertDto dto = new BoardInsertDto(subject, content, "kh1", fileList);  //TODO
-		int sequenceNum = service.insert(dto);
-		resp.sendRedirect(req.getContextPath()+"/board/list?num="+sequenceNum);
+		System.out.println(dto);
+		int result = service.insert(dto);
+		resp.sendRedirect(req.getContextPath()+"/board/list");
 	}
 }

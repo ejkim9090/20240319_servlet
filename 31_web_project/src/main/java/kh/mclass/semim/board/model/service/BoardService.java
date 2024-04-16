@@ -128,10 +128,10 @@ public class BoardService {
 	public int insert(BoardInsertDto dto) {
 		int result = 0;
 		Connection conn = getSemiConnection(true);
-		int sequencNum = dao.getSequenceNum(conn);
-		result = dao.insert(conn, dto, sequencNum);
+//		int sequencNum = dao.getSequenceNum(conn);
+		result = dao.insert(conn, dto);
 		close(conn);
-		return sequencNum;
+		return result;
 	}
 	// update
 	public int update(BoardDto dto) {

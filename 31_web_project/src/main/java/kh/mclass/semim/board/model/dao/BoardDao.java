@@ -15,6 +15,7 @@ import kh.mclass.semim.board.model.dto.BoardListDto;
 import kh.mclass.semim.board.model.dto.BoardReadDto;
 import kh.mclass.semim.board.model.dto.BoardReplyListDto;
 import kh.mclass.semim.board.model.dto.BoardReplyWriteDto;
+import kh.mclass.semim.board.model.dto.FileWriteDto;
 
 public class BoardDao {
 	
@@ -238,31 +239,52 @@ public class BoardDao {
 	
 	
 	// insert
-	public int insert(Connection conn, BoardInsertDto dto, int sequencNum) {
+	public int insert(Connection conn, BoardInsertDto dto) {
+		System.out.println("boardDao insert() param : "+dto);
 		int result = 0;
 //		INSERT INTO BOARD VALUES (SEQ_BOARD_ID.nextval, '제목1', '내용1', default, '127.0.0.1', 'kh1', default);
-		String sql = "INSERT INTO BOARD (BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT)"
-				+ " VALUES (?, ?, ?, default, ?, ?, default)";
+//		String sql = "INSERT INTO BOARD (BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT)"
+//				+ " VALUES (SEQ_BOARD_ID.nextval, ?, ?, default, ?, ?, default)";
+		String sql = "INSERT ALL ";
+		sql+="	INTO BOARD (BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT) ";
+		sql+="		VALUES (SEQ_BOARD_ID.nextval, ?, ?, default, ?, ?, default) ";
+		if(dto.getFileList()!= null && dto.getFileList().size()>0) {
+			for(FileWriteDto filedto :dto.getFileList()) {
+		sql+="	INTO BOARD_FILE (BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME) ";
+		sql+="		VALUES (SEQ_BOARD_ID.nextval, ?, ?, ?) ";
+			}
+		}
+		sql+="	SELECT * FROM DUAL ";
+		System.out.println("sql: "+ sql);
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
 			// ? 처리
-			pstmt.setInt(1, sequencNum);
-			pstmt.setString(2, dto.getSubject());
-			pstmt.setString(3, dto.getContent());
-//			pstmt.setString(4, dto.getLogIp());
-			pstmt.setString(4, null);
-			pstmt.setString(5, dto.getBoardWriter());
+			int i = 1;
+			pstmt.setString(i++, dto.getSubject());
+			pstmt.setString(i++, dto.getContent());
+			pstmt.setString(i++, null); //TODO	pstmt.setString(3, dto.getLogIp());
+			pstmt.setString(i++, dto.getBoardWriter());
+			if(dto.getFileList()!= null && dto.getFileList().size()>0) {
+				int fileId = 1;
+				for(FileWriteDto filedto :dto.getFileList()) {
+					pstmt.setInt(i++, fileId++);
+					pstmt.setString(i++, filedto.getFilePath());
+					pstmt.setString(i++, filedto.getOrginalFileName());
+				}
+			}
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		close(pstmt);
+		System.out.println("boardDao insert() return : "+result);
 		return result;
 	}
 	
 	// update - reply Step
 	public int updateReplyStep(Connection conn, Integer boardReplyId) {
+		System.out.println("boardDao updateReplyStep() param : "+boardReplyId);
 		int result = -1;  // 0~n 정상이므로 비정상인경우-1
 		String sql = "UPDATE BOARD_REPLY SET BOARD_REPLY_STEP = BOARD_REPLY_STEP+1  WHERE "
 				+ "            BOARD_REPLY_REF = ( SELECT BOARD_REPLY_REF FROM BOARD_REPLY WHERE BOARD_REPLY_ID = ?)"
@@ -279,6 +301,7 @@ public class BoardDao {
 			e.printStackTrace();
 		}
 		close(pstmt);
+		System.out.println("boardDao updateReplyStep() return : "+result);
 		return result;
 	}
 	// update - readCount
