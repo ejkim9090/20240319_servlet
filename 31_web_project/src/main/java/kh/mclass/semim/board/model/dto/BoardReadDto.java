@@ -18,14 +18,15 @@ public class BoardReadDto {
 	private String boardWriter;
 	private Integer readCount;
 //	private List<BoardReplyListDto> replydtolist;
+	private List<FileReadDto> filedtolist;
 	
-
 	@Override
 	public String toString() {
 		return "BoardReadDto [boardId=" + boardId + ", subject=" + subject + ", content=" + content + ", writeTime="
 				+ writeTime + ", logIp=" + logIp + ", boardWriter=" + boardWriter + ", readCount=" + readCount
-				+  "]";
+				+ ", filedtolist=" + filedtolist + "]";
 	}
+
 	public BoardReadDto(Integer boardId, String subject, String content, String writeTime, String logIp, String boardWriter,
 			Integer readCount) {
 		super();
@@ -40,6 +41,7 @@ public class BoardReadDto {
 		this.boardWriter = boardWriter;
 		this.readCount = readCount;
 	}
+
 	public Integer getBoardId() {
 		return boardId;
 	}
@@ -60,6 +62,14 @@ public class BoardReadDto {
 	}
 	public Integer getReadCount() {
 		return readCount;
+	}
+
+	public List<FileReadDto> getFiledtolist() {
+		return filedtolist;
+	}
+
+	public void setFiledtolist(List<FileReadDto> filedtolist) {
+		this.filedtolist = filedtolist;
 	}
 	
 	

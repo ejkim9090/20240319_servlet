@@ -15,9 +15,40 @@ import kh.mclass.semim.board.model.dto.BoardListDto;
 import kh.mclass.semim.board.model.dto.BoardReadDto;
 import kh.mclass.semim.board.model.dto.BoardReplyListDto;
 import kh.mclass.semim.board.model.dto.BoardReplyWriteDto;
+import kh.mclass.semim.board.model.dto.FileReadDto;
 import kh.mclass.semim.board.model.dto.FileWriteDto;
 
 public class BoardDao {
+	// select list - all
+	public List<FileReadDto> selectFileList(Connection conn, Integer boardId) {
+		List<FileReadDto> result = null;
+//		(BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME)
+		String sql = "SELECT BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME   FROM BOARD_FILE WHERE BOARD_ID=?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			// ? 처리
+			pstmt.setInt(1, boardId);
+			rs = pstmt.executeQuery();
+			// ResetSet처리
+			if(rs.next()) {
+				result = new ArrayList<FileReadDto>();
+				do {
+					FileReadDto dto = new FileReadDto(	
+							rs.getInt("BOARD_ID"),rs.getInt("BOARD_FILE_ID"),
+							rs.getString("SAVED_FILE_PATH_NAME"),rs.getString("ORIGINAL_FILENAME")
+							);
+					result.add(dto);
+				}while (rs.next());
+			}	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(rs);
+		close(pstmt);
+		return result;
+	}
 	
 	// select list - board reply : board_id
 	public List<BoardReplyListDto> selectBoardReplyList(Connection conn, Integer boardId) {

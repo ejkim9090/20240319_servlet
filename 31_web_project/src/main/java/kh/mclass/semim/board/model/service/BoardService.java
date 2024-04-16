@@ -14,6 +14,7 @@ import kh.mclass.semim.board.model.dto.BoardListDto;
 import kh.mclass.semim.board.model.dto.BoardReadDto;
 import kh.mclass.semim.board.model.dto.BoardReplyListDto;
 import kh.mclass.semim.board.model.dto.BoardReplyWriteDto;
+import kh.mclass.semim.board.model.dto.FileReadDto;
 
 public class BoardService {
 	private BoardDao dao = new BoardDao(); 
@@ -93,6 +94,9 @@ public class BoardService {
 		if(result != null) {
 			dao.updateReadCount(conn, boardId);
 		}
+		List<FileReadDto> filelist = dao.selectFileList(conn, boardId);	
+		result.setFiledtolist(filelist);
+		
 		// ajax 대체
 //		List<BoardReplyListDto> replylist = dao.selectBoardReplyList(conn, boardId);	
 //		result.setReplydtolist(replylist);

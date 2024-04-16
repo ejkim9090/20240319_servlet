@@ -62,6 +62,13 @@
 	</div>
 	<div class="subject">${dto.subject }</div>
 	<div>${dto.content }</div>
+	<c:if test="${not empty dto.filedtolist }">
+	<div>
+		<c:forEach items="${dto.filedtolist }" var="filedto">
+		<div><a href="${pageContext.request.contextPath }/files/${filedto.savedFilePathName}" download="">${filedto.orginalFileName }</a></div>
+		</c:forEach>
+	</div>
+	</c:if>
 	<div>
 		<form id="frm-reply">
 		<input type="hidden" name="boardId" value="${dto.boardId }">
