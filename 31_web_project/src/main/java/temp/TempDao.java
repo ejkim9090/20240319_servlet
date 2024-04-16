@@ -14,6 +14,7 @@ import kh.mclass.semim.member.model.dto.MemberDto;
 public class TempDao {
 	// select list - all
 	public List<MemberDto> selectAllList(Connection conn) {
+		System.out.println("TempDao selectAllList() p: " + "");
 		List<MemberDto> result = null;
 		String sql = "SELECT MEM_ID,MEM_PWD,MEM_EMAIL    FROM MEMBER";
 		PreparedStatement pstmt = null;
@@ -35,10 +36,12 @@ public class TempDao {
 		}
 		close(rs);
 		close(pstmt);
+		System.out.println("TempDao selectAllList() r: " + result);
 		return result;
 	}
 	// select one
 	public MemberDto selectOne(Connection conn, String memId) {
+		System.out.println("TempDao selectOne() p: " + memId);
 		MemberDto result = null;
 		String sql = "SELECT MEM_ID,MEM_PWD,MEM_EMAIL  FROM MEMBER WHERE MEM_ID=?";
 		PreparedStatement pstmt = null;
@@ -57,10 +60,12 @@ public class TempDao {
 		}
 		close(rs);
 		close(pstmt);
+		System.out.println("TempDao selectOne() r: " + result);
 		return result;
 	}
 	// insert
 	public int insert(Connection conn, MemberDto dto) {
+		System.out.println("TempDao insert() p: " + dto);
 		int result = 0;
 //		INSERT INTO MEMBER VALUES ('kh1', 'pwd1', 'kh1@a.com');
 		String sql = "INSERT INTO MEMBER (MEM_ID,MEM_PWD,MEM_EMAIL) VALUES (?, ?, ?)";
@@ -76,10 +81,12 @@ public class TempDao {
 			e.printStackTrace();
 		}
 		close(pstmt);
+		System.out.println("TempDao insert() r: " + result);
 		return result;
 	}
 	// update
 	public int update(Connection conn, MemberDto dto) {
+		System.out.println("TempDao update() p: " + dto);
 		int result = 0;
 		String sql = "";  //TODO
 		PreparedStatement pstmt = null;
@@ -91,10 +98,12 @@ public class TempDao {
 			e.printStackTrace();
 		}
 		close(pstmt);
+		System.out.println("TempDao update() r: " + result);
 		return result;
 	}
 	// delete
 	public int delete(Connection conn, String memId) {
+		System.out.println("TempDao delete() p: " + memId);
 		int result = 0;
 		String sql = "DELETE FROM MEMBER WHERE MEM_ID=?";
 		PreparedStatement pstmt = null;
@@ -107,6 +116,7 @@ public class TempDao {
 			e.printStackTrace();
 		}
 		close(pstmt);
+		System.out.println("TempDao delete() r: " + result);
 		return result;
 	}
 	
