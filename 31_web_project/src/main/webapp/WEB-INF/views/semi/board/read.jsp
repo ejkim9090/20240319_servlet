@@ -65,7 +65,7 @@
 	<c:if test="${not empty dto.filedtolist }">
 	<div>
 		<c:forEach items="${dto.filedtolist }" var="filedto">
-		<div><a href="${pageContext.request.contextPath }/files/${filedto.savedFilePathName}" download="">${filedto.orginalFileName }</a></div>
+		<div><a href="${pageContext.request.contextPath }/files/${filedto.savedFilePathName}" download="${filedto.orginalFileName }">${filedto.orginalFileName }</a></div>
 		</c:forEach>
 	</div>
 	</c:if>
