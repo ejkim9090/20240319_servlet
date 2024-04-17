@@ -8,7 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 public class MybatisTemplate {
 	public static SqlSession getSqlSession() {
-		String resource = "mybatis/mybatis-config.xml";
+		String resource = "mybatis-config.xml";
 		SqlSession session = null;   // Connection 역할을 하는 mybatis의 개체
 		try {
 			InputStream inputStream = Resources.getResourceAsStream(resource);
