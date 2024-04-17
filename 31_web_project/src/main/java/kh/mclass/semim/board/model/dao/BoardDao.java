@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.websocket.Session;
+
+import org.apache.ibatis.session.SqlSession;
+
 import static kh.mclass.jdbc.common.JdbcTemplate.close;
 
 import kh.mclass.semim.board.model.dto.BoardDto;
@@ -51,37 +55,8 @@ public class BoardDao {
 	}
 	
 	// select list - board reply : board_id
-	public List<BoardReplyListDto> selectBoardReplyList(Connection conn, Integer boardId) {
-		List<BoardReplyListDto> result = null;
-		String sql = "select BOARD_REPLY_ID,  BOARD_REPLY_WRITER,BOARD_REPLY_CONTENT, "
-				+ " BOARD_REPLY_WRITE_TIME, "
-				+ " BOARD_REPLY_LEVEL,BOARD_REPLY_REF, BOARD_REPLY_STEP "
-				+ " from board_reply where board_id=? order by board_reply_ref desc,  board_reply_step";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, boardId);
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = new ArrayList<BoardReplyListDto>();
-				do {
-					BoardReplyListDto dto = new BoardReplyListDto(	
-							rs.getInt("BOARD_REPLY_ID"),rs.getString("BOARD_REPLY_WRITER"),
-							rs.getString("BOARD_REPLY_CONTENT"),rs.getString("BOARD_REPLY_WRITE_TIME"),
-							rs.getInt("BOARD_REPLY_LEVEL"),rs.getInt("BOARD_REPLY_REF"),rs.getInt("BOARD_REPLY_STEP")
-							);
-					result.add(dto);
-				}while (rs.next());
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
-		return result;
+	public List<BoardReplyListDto> selectBoardReplyList(SqlSession session, Integer boardId) {
+		return session.selectList("boardns.selectBoardReplyList", boardId);
 	}
 	
 	

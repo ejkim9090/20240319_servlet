@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
+
+import kh.mclass.mybatis.common.MybatisTemplate;
 import kh.mclass.semim.board.model.dao.BoardDao;
 import kh.mclass.semim.board.model.dto.BoardDto;
 import kh.mclass.semim.board.model.dto.BoardInsertDto;
@@ -72,9 +75,10 @@ public class BoardService {
 	// select list - board reply
 	public List<BoardReplyListDto> selectBoardReplyList(Integer boardId) {
 		List<BoardReplyListDto> result = null;
-		Connection conn = getSemiConnection(true);
-		result = dao.selectBoardReplyList(conn, boardId);
-		close(conn);
+//		Connection conn = getSemiConnection(true);
+		SqlSession session = MybatisTemplate.getSqlSession();
+		result = dao.selectBoardReplyList(session, boardId);
+		session.close();
 		return result;
 	}
 	
