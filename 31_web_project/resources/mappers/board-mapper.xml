@@ -8,9 +8,13 @@
 		<result column="ORIGINAL_FILENAME" property="orginalFileName"/>
 	</resultMap>
 
+	<select id="selectPageList" resultType="BoardListDto">
+SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD order by board_id desc
+	</select>
+
 	<select id="selectFileList" parameterType="int" resultMap="FileReadDtoResultMap">
 		SELECT BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME   
-		FROM BOARD_FILE WHERE BOARD_ID=#{boardId}
+		FROM BOARD_FILE WHERE BOARD_ID=#{abc}
 	</select>
 	
 	<select id="selectBoardReplyList" parameterType="int" resultType="kh.mclass.semim.board.model.dto.BoardReplyListDto">
@@ -24,5 +28,39 @@
 	</select>
 	
 	
+	<insert id="insert" parameterType="BoardInsertDto">
+	INSERT ALL 
+	INTO BOARD (BOARD_ID,			SUBJECT,	CONTENT,	WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT) 
+		VALUES (SEQ_BOARD_ID.nextval, #{subject}, #{content}, default, null, #{boardWriter}, default) 
+<if test="fileList != null">
+	<foreach collection="fileList" item="filedto" index="idx" separator=" ">
+	INTO BOARD_FILE (BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME) 
+	VALUES (SEQ_BOARD_ID.nextval, #{idx}, #{filedto.filePath}, #{filedto.orginalFileName}) 
+	</foreach>
+</if>
+	SELECT * FROM DUAL 
+	</insert>
+	
 	
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,14 +6,15 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
 public class MybatisTemplate {
-	public static SqlSession getSqlSession() {
+	public static SqlSession getSqlSession(boolean autoCommit) {
 		String resource = "mybatis-config.xml";
 		SqlSession session = null;   // Connection 역할을 하는 mybatis의 개체
 		try {
 			InputStream inputStream = Resources.getResourceAsStream(resource);
 			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-			session = sqlSessionFactory.openSession();
+			session = sqlSessionFactory.openSession(autoCommit);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

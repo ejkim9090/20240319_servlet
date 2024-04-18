@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import kh.mclass.mybatis.common.MybatisTemplate;
 import kh.mclass.semim.board.model.dao.BoardDao;
@@ -31,12 +32,20 @@ public class BoardService {
 //		return result;
 //	}
 	
-	
+	public Map<String, Object> selectPageListMybatis(int pageSize, int pageBlockSize, int currentPageNum) {
+		Map<String, Object> result = null;
+		SqlSession session = MybatisTemplate.getSqlSession(true);
+		
+		List<BoardListDto> boardList = dao.selectPageListMybatis(session, pageSize, currentPageNum);
+		
+		return result;
+	}
 	// select list - all
 	public Map<String, Object> selectPageList(int pageSize, int pageBlockSize, int currentPageNum) {
 		Map<String, Object> result = null;
 		
 		Connection conn = getSemiConnection(true);
+		
 		System.out.println("currentPageNum: " +currentPageNum);
 		int start = pageSize*(currentPageNum-1)+1;
 		int end = pageSize*currentPageNum;
@@ -57,7 +66,7 @@ public class BoardService {
 //		-- 끝페이지 endPageNum =  (endPageNum > 전체페이지수) ? 전체페이지수 : startPageNum+페이지수 - 1;
 		int startPageNum = (currentPageNum%pageBlockSize == 0) ? ((currentPageNum/pageBlockSize)-1)*pageBlockSize + 1  :((currentPageNum/pageBlockSize))*pageBlockSize + 1;
 		int endPageNum = (startPageNum+pageBlockSize > totalPageCount) ? totalPageCount : startPageNum+pageBlockSize-1;
-				
+		
 		List<BoardListDto> dtolist = dao.selectPageList(conn, start, end);
 		close(conn);
 		
@@ -76,8 +85,10 @@ public class BoardService {
 	public List<BoardReplyListDto> selectBoardReplyList(Integer boardId) {
 		List<BoardReplyListDto> result = null;
 //		Connection conn = getSemiConnection(true);
-		SqlSession session = MybatisTemplate.getSqlSession();
+		SqlSession session = MybatisTemplate.getSqlSession(true);
 		result = dao.selectBoardReplyList(session, boardId);
+//		session.commit();
+//		session.rollback();
 		session.close();
 		return result;
 	}

@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.session.SqlSession;
+
 import static kh.mclass.jdbc.common.JdbcTemplate.close;
 import static kh.mclass.jdbc.common.JdbcTemplate.getSemiConnection;
 
@@ -18,6 +20,8 @@ public class MemberDao {
 
 	// select one login
 	public MemberInfoDto loginGetInfo(Connection conn, MemberLoginDto dto) {
+
+				
 		MemberInfoDto result = null;
 		String sql = "SELECT MEM_ID, MEM_EMAIL FROM MEMBER WHERE MEM_ID=? AND MEM_PWD=?";
 		PreparedStatement pstmt = null;

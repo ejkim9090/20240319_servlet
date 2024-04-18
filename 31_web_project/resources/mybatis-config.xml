@@ -55,6 +55,7 @@
 
 	<mappers>
 		<mapper resource="mappers/board-mapper.xml"/>
+		<!-- <mapper resource="mappers/member-mapper.xml"/> -->
 		<!-- xxx-mapper.xml 생성 후 추가 -->
 	</mappers>
 </configuration>

@@ -15,7 +15,7 @@ public class TempDao {
 	// select list - all
 	public List<MemberDto> selectAllList(Connection conn) {
 		List<MemberDto> result = null;
-		String sql = "SELECT MEM_ID,MEM_PWD,MEM_EMAIL    FROM MEMBER";
+		String sql = "SELECT MEM_ID,MEM_PWD,MEM_EMAIL FROM MEMBER";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {

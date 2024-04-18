@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.websocket.Session;
-
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 import static kh.mclass.jdbc.common.JdbcTemplate.close;
@@ -81,39 +81,21 @@ public class BoardDao {
 		close(pstmt);
 		return result;
 	}
+	
+	public List<BoardListDto> selectPageListMybatis(SqlSession session,int pageSize,  int currentPageNum) {
+		List<BoardListDto> result = null;
+		int offset = (currentPageNum - 1) * pageSize;
+		RowBounds rbounds = new RowBounds( offset , pageSize);
+		result = session.selectList("boardns.selectPageList", null, rbounds);
+		return result;
+	}
+	
+	
 	// select list - all
 	public List<BoardListDto> selectPageList(Connection conn, int start, int end) {
 		List<BoardListDto> result = null;
-		String sql = "select t2.*"
-				+"   from (select t1.*, rownum rn" 
-			    +"       from (SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD order by board_id desc) t1 ) t2"
-			    +"   where rn between ?   and ?"
-			    ;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, start);//한페이지당글수*(현재페이지-1)+1
-			pstmt.setInt(2, end);//한페이지당글수*(현재페이지)
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = new ArrayList<BoardListDto>();
-				do {
-					BoardListDto dto = new BoardListDto(	
-							rs.getInt("BOARD_ID"),rs.getString("SUBJECT"),
-							rs.getString("WRITE_TIME"),rs.getString("BOARD_WRITER"),
-							rs.getInt("READ_COUNT")
-							);
-					result.add(dto);
-				}while (rs.next());
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
+		
+		
 		return result;
 	}
 	
@@ -248,42 +230,9 @@ public class BoardDao {
 	public int insert(Connection conn, BoardInsertDto dto) {
 		System.out.println("boardDao insert() param : "+dto);
 		int result = 0;
-//		INSERT INTO BOARD VALUES (SEQ_BOARD_ID.nextval, '제목1', '내용1', default, '127.0.0.1', 'kh1', default);
-//		String sql = "INSERT INTO BOARD (BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT)"
-//				+ " VALUES (SEQ_BOARD_ID.nextval, ?, ?, default, ?, ?, default)";
-		String sql = "INSERT ALL ";
-		sql+="	INTO BOARD (BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT) ";
-		sql+="		VALUES (SEQ_BOARD_ID.nextval, ?, ?, default, ?, ?, default) ";
-		if(dto.getFileList()!= null && dto.getFileList().size()>0) {
-			for(FileWriteDto filedto :dto.getFileList()) {
-		sql+="	INTO BOARD_FILE (BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME) ";
-		sql+="		VALUES (SEQ_BOARD_ID.nextval, ?, ?, ?) ";
-			}
-		}
-		sql+="	SELECT * FROM DUAL ";
-		System.out.println("sql: "+ sql);
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			int i = 1;
-			pstmt.setString(i++, dto.getSubject());
-			pstmt.setString(i++, dto.getContent());
-			pstmt.setString(i++, null); //TODO	pstmt.setString(3, dto.getLogIp());
-			pstmt.setString(i++, dto.getBoardWriter());
-			if(dto.getFileList()!= null && dto.getFileList().size()>0) {
-				int fileId = 1;
-				for(FileWriteDto filedto :dto.getFileList()) {
-					pstmt.setInt(i++, fileId++);
-					pstmt.setString(i++, filedto.getFilePath());
-					pstmt.setString(i++, filedto.getOrginalFileName());
-				}
-			}
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
+//TODO
+		
+		//session
 		System.out.println("boardDao insert() return : "+result);
 		return result;
 	}
