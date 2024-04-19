@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="boardMapper">
+	<resultMap type="FileReadDto" id="FileReadDtoResultMap">
+		<result column="BOARD_ID" property="boardId"/>
+		<result column="BOARD_FILE_ID" property="boardFileId"/>
+		<result column="SAVED_FILE_PATH_NAME" property="savedFilePathName"/>
+		<result column="ORIGINAL_FILENAME" property="orginalFileName"/>
+	</resultMap>
+
+	<select id="selectFileList" parameterType="int" resultMap="FileReadDtoResultMap">
+		SELECT BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME   
+		FROM BOARD_FILE WHERE BOARD_ID=#{abc}
+	</select>
+
+	<select id="selectBoardReplyList" parameterType="int" resultType="BoardReplyListDto">
+		select BOARD_REPLY_ID,  BOARD_REPLY_WRITER,BOARD_REPLY_CONTENT, 
+				BOARD_REPLY_WRITE_TIME, 
+				BOARD_REPLY_LEVEL,BOARD_REPLY_REF, BOARD_REPLY_STEP
+		from board_reply where board_id=#{boardId} order by board_reply_ref desc,  board_reply_step
+	</select>
+	
+	<select id="selectTotalCount" resultType="int">
+		select count(*) cnt from board
+	</select>
+	
+	<select id="selectPageListRowBounds" resultType="BoardListDto">
+		SELECT BOARD_ID, SUBJECT,to_char(WRITE_TIME,'yyyy-mm-dd hh24:mi'), BOARD_WRITER, READ_COUNT    
+		FROM BOARD order by board_id desc
+	</select>
+	
+	<select id="selectPageList" resultType="BoardListDto" parameterType="map">
+		select BOARD_ID, SUBJECT,to_char(WRITE_TIME,'yyyy-mm-dd hh24:mi'),BOARD_WRITER,READ_COUNT 
+			from (select t1.*, rownum rn  
+				from (SELECT BOARD_ID, SUBJECT, WRITE_TIME, BOARD_WRITER, READ_COUNT    FROM BOARD order by board_id desc) t1 )
+		where rn between #{startRownum} and #{endRownum}
+	</select>
+	
+	<select id="selectAllList" resultType="BoardListDto">
+		SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    
+		FROM BOARD
+	</select>
+	
+	<select id="selectOne" resultType="BoardReadDto" parameterType="int">
+		SELECT BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    
+		FROM BOARD WHERE BOARD_ID=#{boardId}
+	</select>
+	
+	<select id="getSequenceNum" resultType="int">
+	SELECT SEQ_BOARD_ID.nextval seq FROM DUAL
+	</select>
+	
+	<insert id="insertRReply" parameterType="BoardReplyWriteDto">
+		INSERT INTO BOARD_REPLY VALUES ( (SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD_REPLY),
+			#{boardId}, #{boardReplyWriter}, #{boardReplyContent} , default , null, 
+			(SELECT BOARD_REPLY_LEVEL+1 FROM BOARD_REPLY WHERE BOARD_REPLY_ID = #{boardReplyId} )  , 
+			(SELECT BOARD_REPLY_REF     FROM BOARD_REPLY WHERE BOARD_REPLY_ID = #{boardReplyId} )  , 
+			(SELECT BOARD_REPLY_STEP+1  FROM BOARD_REPLY WHERE BOARD_REPLY_ID = #{boardReplyId} )  )
+	</insert>
+	
+	<insert id="insertReply" parameterType="BoardReplyWriteDto">
+		INSERT INTO BOARD_REPLY VALUES ( (SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD_REPLY),
+			#{boardId}, #{boardReplyWriter}, #{boardReplyContent} , default , null, 
+			default  , 
+			(SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD_REPLY)  , 
+			default  )
+	</insert>
+	
+	<insert id="insert" parameterType="BoardInsertDto">
+		INSERT ALL 
+		INTO BOARD (BOARD_ID,			SUBJECT,	CONTENT,	WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT) 
+			VALUES (SEQ_BOARD_ID.nextval, #{subject}, #{content}, default, null, #{boardWriter}, default) 
+<if test="fileList != null">
+<foreach collection="fileList" item="filedto" index="idx" separator=" ">
+		INTO BOARD_FILE (BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME) 
+		VALUES (SEQ_BOARD_ID.nextval, #{idx}, #{filedto.filePath}, #{filedto.orginalFileName}) 
+</foreach>
+</if>
+		SELECT * FROM DUAL 
+	</insert>
+	
+	<update id="updateReplyStep" parameterType="int">
+		UPDATE BOARD_REPLY SET BOARD_REPLY_STEP = BOARD_REPLY_STEP+1   
+		WHERE
+			BOARD_REPLY_REF = ( SELECT BOARD_REPLY_REF FROM BOARD_REPLY WHERE BOARD_REPLY_ID = #{boardReplyId})
+			AND 
+			BOARD_REPLY_STEP > ( SELECT BOARD_REPLY_STEP FROM BOARD_REPLY WHERE BOARD_REPLY_ID = #{boardReplyId} )
+	</update>
+	
+	<update id="updateReadCount"  parameterType="int">
+		update board set read_count=read_count+1 where board_id=#{boardId}
+	</update>
+	
+	<delete id="delete"  parameterType="int">
+		DELETE FROM BOARD WHERE BOARD_ID=#{boardId}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

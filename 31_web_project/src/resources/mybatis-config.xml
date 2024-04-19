@@ -9,22 +9,13 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias
-			type="kh.mclass.semim.board.model.dto.BoardListDto"
-			alias="BoardListDto" />
-		<typeAlias
-			type="kh.mclass.semim.board.model.dto.BoardReadDto"
-			alias="BoardReadDto" />
-		<typeAlias
-			type="kh.mclass.semim.board.model.dto.BoardReplyDto"
-			alias="BoardReplyDto" />
-		<typeAlias
-			type="kh.mclass.semim.board.model.dto.BoardInsertDto"
-			alias="BoardInsertDto" />
+		<!-- package 내 클래스명이 별칭으로 상용됨 -->
+		<package name="kh.mclass.semim.board.model.dto"/>
+		<package name="kh.mclass.semim.member.model.dto"/>
 	</typeAliases>
 
-	<environments default="development1">
-		<environment id="development1">
+	<environments default="semimDbServer">
+		<environment id="semimLocalhost">
 			<transactionManager type="JDBC"></transactionManager>
 			<dataSource type="POOLED">
 				<property name="driver" value="${jdbc.driver}" />
@@ -33,7 +24,7 @@
 				<property name="password" value="${jdbc.semi.password}" />
 			</dataSource>
 		</environment>
-		<environment id="development2">
+		<environment id="semimDbServer">
 			<transactionManager type="JDBC"></transactionManager>
 			<dataSource type="POOLED">
 				<property name="driver" value="${jdbc.driver}" />
@@ -42,7 +33,7 @@
 				<property name="password" value="${jdbc.semi.password}" />
 			</dataSource>
 		</environment>
-		<environment id="development3">
+		<environment id="scottLocalhost">
 			<transactionManager type="JDBC"></transactionManager>
 			<dataSource type="POOLED">
 				<property name="driver" value="${jdbc.driver}" />
@@ -55,7 +46,7 @@
 
 	<mappers>
 		<mapper resource="mappers/board-mapper.xml"/>
-		<!-- <mapper resource="mappers/member-mapper.xml"/> -->
+		<mapper resource="mappers/member-mapper.xml"/>
 		<!-- xxx-mapper.xml 생성 후 추가 -->
 	</mappers>
 </configuration>

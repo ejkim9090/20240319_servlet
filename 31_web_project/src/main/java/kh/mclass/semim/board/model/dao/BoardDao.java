@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,287 +25,80 @@ import kh.mclass.semim.board.model.dto.FileWriteDto;
 
 public class BoardDao {
 	// select list - all
-	public List<FileReadDto> selectFileList(Connection conn, Integer boardId) {
-		List<FileReadDto> result = null;
-//		(BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME)
-		String sql = "SELECT BOARD_ID, BOARD_FILE_ID, SAVED_FILE_PATH_NAME, ORIGINAL_FILENAME   FROM BOARD_FILE WHERE BOARD_ID=?";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, boardId);
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = new ArrayList<FileReadDto>();
-				do {
-					FileReadDto dto = new FileReadDto(	
-							rs.getInt("BOARD_ID"),rs.getInt("BOARD_FILE_ID"),
-							rs.getString("SAVED_FILE_PATH_NAME"),rs.getString("ORIGINAL_FILENAME")
-							);
-					result.add(dto);
-				}while (rs.next());
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
-		return result;
+	public List<FileReadDto> selectFileList(SqlSession session, Integer boardId) {
+		return session.selectList("boardMapper.selectFileList",boardId );
 	}
 	
 	// select list - board reply : board_id
 	public List<BoardReplyListDto> selectBoardReplyList(SqlSession session, Integer boardId) {
-		return session.selectList("boardns.selectBoardReplyList", boardId);
+		return session.selectList("boardMapper.selectBoardReplyList", boardId);
 	}
-	
 	
 	// select total Count
-	public int selectTotalCount(Connection conn) {
-		int result = 0;
-		String sql = "select count(*) cnt from board";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = rs.getInt("cnt");
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
-		return result;
+	public Integer selectTotalCount(SqlSession session) {
+		return session.selectOne("boardMapper.selectTotalCount");
 	}
 	
-	public List<BoardListDto> selectPageListMybatis(SqlSession session,int pageSize,  int currentPageNum) {
-		List<BoardListDto> result = null;
+	public List<BoardListDto> selectPageListRowBounds(SqlSession session,int pageSize,  int currentPageNum) {
 		int offset = (currentPageNum - 1) * pageSize;
 		RowBounds rbounds = new RowBounds( offset , pageSize);
-		result = session.selectList("boardns.selectPageList", null, rbounds);
-		return result;
-	}
-	
-	
-	// select list - all
-	public List<BoardListDto> selectPageList(Connection conn, int start, int end) {
-		List<BoardListDto> result = null;
-		
-		
-		return result;
+		return session.selectList("boardMapper.selectPageList", null, rbounds);
 	}
 	
 	// select list - all
-	public List<BoardListDto> selectAllList(Connection conn) {
-		List<BoardListDto> result = null;
-		String sql = "SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = new ArrayList<BoardListDto>();
-				do {
-					BoardListDto dto = new BoardListDto(	
-							rs.getInt("BOARD_ID"),rs.getString("SUBJECT"),
-							rs.getString("WRITE_TIME"),rs.getString("BOARD_WRITER"),
-							rs.getInt("READ_COUNT")
-							);
-					result.add(dto);
-				}while (rs.next());
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
-		return result;
+	public List<BoardListDto> selectPageList(SqlSession session, int start, int end) {
+		Map<String, Integer> param = new HashMap<String, Integer>();
+		param.put("startRownum", start);
+		param.put("endRownum", end);
+		return session.selectList("boardMapper.selectPageList", param);
+	}
+	
+	// select list - all
+	public List<BoardListDto> selectAllList(SqlSession session) {
+		return session.selectList("boardMapper.selectAllList");
 	}
 	// select one
-	public BoardReadDto selectOne(Connection conn, Integer boardId) {
-		BoardReadDto result = null;
-		String sql = "SELECT BOARD_ID,SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD WHERE BOARD_ID=?";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, boardId);
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = new BoardReadDto(	
-						rs.getInt("BOARD_ID"),rs.getString("SUBJECT"),rs.getString("CONTENT"),
-						rs.getString("WRITE_TIME"),rs.getString("LOG_IP"),rs.getString("BOARD_WRITER"),
-						rs.getInt("READ_COUNT")
-						);
-			}			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
-		return result;
+	public BoardReadDto selectOne(SqlSession session, Integer boardId) {
+		return session.selectOne("boardMapper.selectOne", boardId);
 	}
 	
 	// select 
-	public int getSequenceNum(Connection conn) {
-		int result = 0;
-		String sql = "SELECT SEQ_BOARD_ID.nextval FROM DUAL";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			rs = pstmt.executeQuery();
-			// ResetSet처리
-			if(rs.next()) {
-				result = rs.getInt(1);
-			}			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(rs);
-		close(pstmt);
-		return result;
+	public Integer getSequenceNum(SqlSession session) {
+		return session.selectOne("boardMapper.getSequenceNum");
 	}
 	
 	// insert - Reply 댓글 대댓글
-	public int insertRReply(Connection conn, BoardReplyWriteDto dto) {
-		int result = 0;  // 1 정상, 0비정상
-		String sql = " INSERT INTO BOARD_REPLY VALUES ( (SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD_REPLY), ?,"
-				+ "            ?, ? , default , null, "
-				+ "            (SELECT BOARD_REPLY_LEVEL+1 FROM BOARD_REPLY WHERE BOARD_REPLY_ID = ? )  , "
-				+ "            (SELECT BOARD_REPLY_REF     FROM BOARD_REPLY WHERE BOARD_REPLY_ID = ? )  , "
-				+ "            (SELECT BOARD_REPLY_STEP+1  FROM BOARD_REPLY WHERE BOARD_REPLY_ID = ? )  )";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, dto.getBoardId());
-			pstmt.setString(2, dto.getBoardReplyWriter());
-			pstmt.setString(3, dto.getBoardReplyContent());
-			pstmt.setInt(4, dto.getBoardReplyId());
-			pstmt.setInt(5, dto.getBoardReplyId());
-			pstmt.setInt(6, dto.getBoardReplyId());
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
-		return result;
+	public int insertRReply(SqlSession session, BoardReplyWriteDto dto) {
+		return session.insert("boardMapper.insertRReply", dto);
 	}
 	
 	// insert - Reply 댓글 원본글
-	public int insertReply(Connection conn, BoardReplyWriteDto dto) {
-		int result = 0;
-		String sql = " INSERT INTO BOARD_REPLY VALUES"
-				+ "        ( (SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD_REPLY) , ?, "
-				+ "            ?, ? , default , null, "
-				+ "            DEFAULT , (SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD_REPLY), DEFAULT )";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, dto.getBoardId());
-			pstmt.setString(2, dto.getBoardReplyWriter());
-			pstmt.setString(3, dto.getBoardReplyContent());
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
-		return result;
+	public int insertReply(SqlSession session, BoardReplyWriteDto dto) {
+		return session.insert("boardMapper.insertReply", dto);
 	}
 	
-	
 	// insert
-	public int insert(Connection conn, BoardInsertDto dto) {
-		System.out.println("boardDao insert() param : "+dto);
-		int result = 0;
-//TODO
-		
-		//session
-		System.out.println("boardDao insert() return : "+result);
-		return result;
+	public int insert(SqlSession session, BoardInsertDto dto) {
+		return session.insert("boardMapper.insert", dto);
 	}
 	
 	// update - reply Step
-	public int updateReplyStep(Connection conn, Integer boardReplyId) {
-		System.out.println("boardDao updateReplyStep() param : "+boardReplyId);
-		int result = -1;  // 0~n 정상이므로 비정상인경우-1
-		String sql = "UPDATE BOARD_REPLY SET BOARD_REPLY_STEP = BOARD_REPLY_STEP+1  WHERE "
-				+ "            BOARD_REPLY_REF = ( SELECT BOARD_REPLY_REF FROM BOARD_REPLY WHERE BOARD_REPLY_ID = ?)"
-				+ "            AND "
-				+ "            BOARD_REPLY_STEP > ( SELECT BOARD_REPLY_STEP FROM BOARD_REPLY WHERE BOARD_REPLY_ID = ? )";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, boardReplyId);
-			pstmt.setInt(2, boardReplyId);
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
-		System.out.println("boardDao updateReplyStep() return : "+result);
-		return result;
+	public int updateReplyStep(SqlSession session, Integer boardReplyId) {
+		return session.update("boardMapper.updateReplyStep", boardReplyId);
 	}
 	// update - readCount
-	public int updateReadCount(Connection conn, Integer boardId) {
-		int result = 0;
-		String sql = "update board set read_count=read_count+1 where board_id=?";  //TODO
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, boardId);
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
-		return result;
+	public int updateReadCount(SqlSession session, Integer boardId) {
+		return session.update("boardMapper.updateReadCount", boardId);
 	}
 	// update
-	public int update(Connection conn, BoardDto dto) {
+	public int update(SqlSession session, BoardDto dto) {
 		int result = 0;
-		String sql = "";  //TODO
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
+		//TODO
 		return result;
 	}
 	// delete
-	public int delete(Connection conn, Integer boardId) {
-		int result = 0;
-		String sql = "DELETE FROM BOARD WHERE BOARD_ID=?";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			// ? 처리
-			pstmt.setInt(1, boardId);
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		close(pstmt);
-		return result;
+	public int delete(SqlSession session, Integer boardId) {
+		return session.delete("boardMapper.delete", boardId);
 	}
 	
 }

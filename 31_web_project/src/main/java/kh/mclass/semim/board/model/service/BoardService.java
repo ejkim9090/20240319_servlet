@@ -1,16 +1,13 @@
 package kh.mclass.semim.board.model.service;
 
 
-import static kh.mclass.jdbc.common.JdbcTemplate.*;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import kh.mclass.mybatis.common.MybatisTemplate;
+import static kh.mclass.jdbc.common.MybatisTemplate.*;
 import kh.mclass.semim.board.model.dao.BoardDao;
 import kh.mclass.semim.board.model.dto.BoardDto;
 import kh.mclass.semim.board.model.dto.BoardInsertDto;
@@ -23,40 +20,26 @@ import kh.mclass.semim.board.model.dto.FileReadDto;
 public class BoardService {
 	private BoardDao dao = new BoardDao(); 
 	
-	// select totalCount - conn을 재연결 하지 않도록 함.
-//	public int selectTotalCount() {
-//		int result = 0;
-//		Connection conn = getSemiConnection(true);
-//		result = dao.selectTotalCount(conn);
-//		close(conn);
-//		return result;
-//	}
-	
 	public Map<String, Object> selectPageListMybatis(int pageSize, int pageBlockSize, int currentPageNum) {
 		Map<String, Object> result = null;
-		SqlSession session = MybatisTemplate.getSqlSession(true);
-		
-		List<BoardListDto> boardList = dao.selectPageListMybatis(session, pageSize, currentPageNum);
-		
+		SqlSession session = getSqlSession();
+		List<BoardListDto> boardList = dao.selectPageListRowBounds(session, pageSize, currentPageNum);
+		session.close();
 		return result;
 	}
 	// select list - all
 	public Map<String, Object> selectPageList(int pageSize, int pageBlockSize, int currentPageNum) {
 		Map<String, Object> result = null;
 		
-		Connection conn = getSemiConnection(true);
+		SqlSession session = getSqlSession();
 		
 		System.out.println("currentPageNum: " +currentPageNum);
 		int start = pageSize*(currentPageNum-1)+1;
 		int end = pageSize*currentPageNum;
-//		select t2.*
-//		from (select t1.*, rownum rn from (SELECT BOARD_ID, SUBJECT,CONTENT,WRITE_TIME,LOG_IP,BOARD_WRITER,READ_COUNT    FROM BOARD order by board_id desc) t1 ) t2
-//		--where rn between 한페이지당글수*(현재페이지-1)+1   and 한페이지당글수*(현재페이지)
-//		;
 		
 //		--- 총글개수 103
 //		select count(*) cnt from board;
-		int totalCount = dao.selectTotalCount(conn);
+		int totalCount = dao.selectTotalCount(session);
 		System.out.println("totalCount:"+totalCount);
 //		-- 전체페이지수  = ceil(총글개수/한페이지당글수) = (총글개수%한페이지당글수== 0)?(총글개수/한페이지당글수):(총글개수/한페이지당글수+1) 
 //		int totalPageCount = (int)Math.ceil(totalCount/(double)pageSize);
@@ -67,8 +50,8 @@ public class BoardService {
 		int startPageNum = (currentPageNum%pageBlockSize == 0) ? ((currentPageNum/pageBlockSize)-1)*pageBlockSize + 1  :((currentPageNum/pageBlockSize))*pageBlockSize + 1;
 		int endPageNum = (startPageNum+pageBlockSize > totalPageCount) ? totalPageCount : startPageNum+pageBlockSize-1;
 		
-		List<BoardListDto> dtolist = dao.selectPageList(conn, start, end);
-		close(conn);
+		List<BoardListDto> dtolist = dao.selectPageList(session, start, end);
+		session.close();
 		
 		result = new HashMap<String, Object>();
 		result.put("dtolist", dtolist);
@@ -84,8 +67,7 @@ public class BoardService {
 	// select list - board reply
 	public List<BoardReplyListDto> selectBoardReplyList(Integer boardId) {
 		List<BoardReplyListDto> result = null;
-//		Connection conn = getSemiConnection(true);
-		SqlSession session = MybatisTemplate.getSqlSession(true);
+		SqlSession session = getSqlSession(true);
 		result = dao.selectBoardReplyList(session, boardId);
 //		session.commit();
 //		session.rollback();
@@ -96,26 +78,26 @@ public class BoardService {
 	// select list - all
 	public List<BoardListDto> selectAllList() {
 		List<BoardListDto> result = null;
-		Connection conn = getSemiConnection(true);
-		result = dao.selectAllList(conn);
-		close(conn);
+		SqlSession session = getSqlSession();
+		result = dao.selectAllList(session);
+		session.close();
 		return result;
 	}
 	// select one
 	public BoardReadDto selectOne(Integer boardId) {
 		BoardReadDto result = null;
-		Connection conn = getSemiConnection(true);
-		result = dao.selectOne(conn, boardId);
+		SqlSession session = getSqlSession();
+		result = dao.selectOne(session, boardId);
 		if(result != null) {
-			dao.updateReadCount(conn, boardId);
+			dao.updateReadCount(session, boardId);
 		}
-		List<FileReadDto> filelist = dao.selectFileList(conn, boardId);	
+		List<FileReadDto> filelist = dao.selectFileList(session, boardId);	
 		result.setFiledtolist(filelist);
 		
 		// ajax 대체
-//		List<BoardReplyListDto> replylist = dao.selectBoardReplyList(conn, boardId);	
+//		List<BoardReplyListDto> replylist = dao.selectBoardReplyList(session, boardId);	
 //		result.setReplydtolist(replylist);
-		close(conn);
+		session.close();
 		return result;
 	}
 	
@@ -125,47 +107,45 @@ public class BoardService {
 	public int insertReply(BoardReplyWriteDto dto) {
 		int result = 0;
 		int resultupdate = 0;
-		Connection conn = getSemiConnection(true);
-		autoCommit(conn, false);
+		SqlSession session = getSqlSession(false);
 		if(dto.getBoardReplyId() != 0) {
-			resultupdate = dao.updateReplyStep(conn, dto.getBoardReplyId());
+			resultupdate = dao.updateReplyStep(session, dto.getBoardReplyId());
 			if(resultupdate > -1) {
-				result = dao.insertRReply(conn, dto);
+				result = dao.insertRReply(session, dto);
 			}
 		} else {
-			result = dao.insertReply(conn, dto);
+			result = dao.insertReply(session, dto);
 		}
 		if(resultupdate > -1 && result > 0) {
-			commit(conn);
+			session.commit();
 		}else {
-			rollback(conn);
+			session.rollback();
 		}
-		close(conn);
+		session.close();
 		return result;
 	}
 	// insert
 	public int insert(BoardInsertDto dto) {
 		int result = 0;
-		Connection conn = getSemiConnection(true);
-//		int sequencNum = dao.getSequenceNum(conn);
-		result = dao.insert(conn, dto);
-		close(conn);
+		SqlSession session = getSqlSession();
+		result = dao.insert(session, dto);
+		session.close();
 		return result;
 	}
 	// update
 	public int update(BoardDto dto) {
 		int result = 0;
-		Connection conn = getSemiConnection(true);
-		result = dao.update(conn, dto);
-		close(conn);
+		SqlSession session = getSqlSession();
+		result = dao.update(session, dto);
+		session.close();
 		return result;
 	}
 	// delete
 	public int delete(Integer boardId) {
 		int result = 0;
-		Connection conn = null;
-		result = dao.delete(conn, boardId);
-		close(conn);
+		SqlSession session = getSqlSession();
+		result = dao.delete(session, boardId);
+		session.close();
 		return result;
 	}
 }
