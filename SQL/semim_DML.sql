@@ -1,4 +1,6 @@
 ------------------------SEMIM BOARD DML -------------------------
+DROP SEQUENCE "SEQ_BOARD_ID";
+CREATE SEQUENCE "SEQ_BOARD_ID";
 --- & 대체입력창이 아니라 문자그대로 동작하도록 함.
 set define off;
 --set feedback off
@@ -113,17 +115,13 @@ INSERT INTO BOARD_REPLY VALUES ( (SELECT NVL(MAX(BOARD_REPLY_ID),0)+1 FROM BOARD
     (SELECT BOARD_REPLY_REF     FROM BOARD_REPLY WHERE BOARD_REPLY_ID = 3 )  , 
     (SELECT BOARD_REPLY_STEP+1  FROM BOARD_REPLY WHERE BOARD_REPLY_ID = 3 )  );
     
-select * from BOARD_REPLY ORDER BY BOARD_REPLY_REF DESC, BOARD_REPLY_STEP ASC;
+--select * from BOARD_REPLY ORDER BY BOARD_REPLY_REF DESC, BOARD_REPLY_STEP ASC;
 
-DELETE from BOARD_REPLY WHERE BOARD_REPLY_ID=5;
+--DELETE from BOARD_REPLY WHERE BOARD_REPLY_ID=5;
 commit;
 
-set define on;
-
-select * from MEMBER;
-select * from BOARD;
-select * from BOARD_REPLY;
-EXEC PRO_BOARD_INSERT('kh2', '제목----', 10);
+-------------------------- Procedure---------------------------------------------------
+--  Procedure ------
 create or replace NONEDITIONABLE PROCEDURE PRO_BOARD_INSERT 
 (  P_WRITER_KEY BOARD.BOARD_WRITER%TYPE,
 P_SUBJECT_STR BOARD.SUBJECT%TYPE,
@@ -153,11 +151,11 @@ BEGIN
                     );
         END LOOP;
         DBMS_OUTPUT.PUT_LINE('글쓰기 완료');
+        commit;
     END IF;
 END;
 /
-
-EXEC PRO_MEMBER_BOARD_INSERT('K','@AAA.KH.COM', '제목--', 10);
+------ procedure ----------
 CREATE OR REPLACE PROCEDURE PRO_MEMBER_BOARD_INSERT 
 (  P_MEMBER_ID_KEY MEMBER.MEM_ID%type
   ,P_MEMBER_EMAIL_DOMAIN MEMBER.MEM_EMAIL%type
@@ -181,14 +179,10 @@ BEGIN
         ( V_B.BOARD_ID, P_SUBJECT_STR||I, '내용----'||I,
           default, '127.0.0.1', V_M.MEM_ID, default);
     END LOOP;
+    commit;
 END;
 /
-select * from BOARD_REPLY ORDER BY BOARD_REPLY_REF DESC, BOARD_REPLY_STEP ASC;
---EXEC PRO_BOARD_INSERT('kh1', '제목----', 10);
---EXEC PRO_MEMBER_BOARD_INSERT('m','@AAA.KH.COM', '제목--', 10);
-EXEC PRO_BOARD_REPLY_INSERT('kh1','내용~', 3, 0);
-EXEC PRO_BOARD_REPLY_INSERT('kh1','내용~', 3, 1);
---EXEC PRO_BOARD_REPLY_INSERT('kh1','내용~', 3, 여기BOARD_REPLY_ID번호적기);
+------------- procedure -----------
 CREATE OR REPLACE PROCEDURE PRO_BOARD_REPLY_INSERT 
 (  P_WRITER_KEY     BOARD_REPLY.BOARD_REPLY_WRITER%TYPE
   ,P_CONTENT_STR    BOARD_REPLY.BOARD_REPLY_CONTENT%TYPE
@@ -256,23 +250,10 @@ BEGIN
             (SELECT BOARD_REPLY_REF     FROM BOARD_REPLY WHERE BOARD_REPLY_ID = P_RE_BOARD_REPLY_ID )  , 
             (SELECT BOARD_REPLY_STEP+1  FROM BOARD_REPLY WHERE BOARD_REPLY_ID = P_RE_BOARD_REPLY_ID )  );
     END IF;
-    
+    commit;
 END;
 /
-
-desc member;
-desc board_reply;
-desc board;
-
-select * from BOARD_REPLY order by board_id;
-
-variable vtablename varchar2;
-exec pro_create_table('EJ', :vtablename);
-PRINT vtablename;
-
-select * from user_tables;
-SELECT * FROM LOG_EJ_20240404;
-/
+----------- procedure table 만들기 - 참고용 --------------- 
 create or replace procedure pro_create_table( p_user_id in varchar2, p_table_name out varchar2 )
 is
     v_dbdate varchar2(10);
@@ -299,12 +280,28 @@ begin
     DBMS_SQL.CLOSE_CURSOR(v_cursor);
 end;
 /
+----- 참고용 ----
+-----variable vtablename varchar2;
+-----EXEC pro_create_table('EJ', :vtablename);
+-----PRINT vtablename;
+-----select * from log_ej_20240405;
+-----drop table log_ej_20240405;
 
 
+----------- member, board insert
+EXEC PRO_MEMBER_BOARD_INSERT('K','@AAA.KH.COM', '제목--', 10);
+----------- board insert
+EXEC PRO_BOARD_INSERT('kh2', '제목----', 10);
+----------- board_reply insert
+--EXEC PRO_BOARD_INSERT('kh1', '제목----', 10);
+--EXEC PRO_MEMBER_BOARD_INSERT('m','@AAA.KH.COM', '제목--', 10);
+--EXEC PRO_BOARD_REPLY_INSERT('kh1','내용~', 3, 0);
+--EXEC PRO_BOARD_REPLY_INSERT('kh1','내용~', 3, 1);
+--EXEC PRO_BOARD_REPLY_INSERT('kh1','내용~', 3, 여기BOARD_REPLY_ID번호적기);
+----------select * from BOARD_REPLY ORDER BY BOARD_REPLY_REF DESC, BOARD_REPLY_STEP ASC;
 
+set define on;
 
-
-
-
-
-
+--select * from MEMBER;
+--select * from BOARD;
+--select * from BOARD_REPLY;
