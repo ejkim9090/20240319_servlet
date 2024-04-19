@@ -28,3 +28,5 @@ properties/
 hs_err_pid*
 replay_pid*
 SQL/시스_프로젝트계정관리.sql
+31_web_project/src/main/java/kh/mclass/common/filter/CORSFilter.java
+31_web_project/src/main/java/kh/mclass/common/filter/IPAllowFilter.java
