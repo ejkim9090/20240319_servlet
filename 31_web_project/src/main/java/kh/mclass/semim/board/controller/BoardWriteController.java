@@ -41,11 +41,6 @@ public class BoardWriteController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		String prePage = (String)request.getSession().getAttribute("prePage");
-		if(prePage!= null && prePage.equals("write")) {
-			request.getSession().removeAttribute("prePage");
-		}
 		request.getRequestDispatcher("/WEB-INF/views/semi/board/write.jsp").forward(request, response);
 	}
 	
