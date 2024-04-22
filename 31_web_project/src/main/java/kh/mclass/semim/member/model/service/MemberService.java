@@ -1,7 +1,14 @@
 package kh.mclass.semim.member.model.service;
 
 import static kh.mclass.jdbc.common.MybatisTemplate.*;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -23,6 +30,26 @@ public class MemberService {
 	}
 	// select Login
 	public int login(MemberLoginDto dto) {
+		// TODO Test
+		Properties prop1 =  new Properties();
+		Properties prop2 =  new Properties();
+		Properties prop3 =  new Properties();
+		try {
+			prop1.load(new BufferedReader(new FileReader("/db.properties")));
+			prop2.load(new BufferedReader(new FileReader("/WEB-INF/classes/db.properties")));
+			prop2.load(new BufferedReader(new FileReader("/WEB-INF/classes/db.properties")));
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			prop1.clear();
+			prop2.clear();
+			prop3.clear();
+		}
+		
+		
 		int result = 0;
 		SqlSession session = getSqlSession();
 		result = dao.login(session, dto);

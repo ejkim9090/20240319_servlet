@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+	<header>
+		<resultCode>00</resultCode>
+		<resultMsg>NORMAL SERVICE.</resultMsg>
+	</header>
+	<body>
+		<items>
+			<item>
+				<description>기사,산업기사(2024년도 제1회)</description>
+				<docexamdt>20240215</docexamdt>
+				<docpassdt>20240313</docpassdt>
+				<docregenddt>20240126</docregenddt>
+				<docregstartdt>20240123</docregstartdt>
+				<docsubmitentdt>20240325</docsubmitentdt>
+				<docsubmitstartdt>20240215</docsubmitstartdt>
+				<pracexamenddt>20240517</pracexamenddt>
+				<pracexamstartdt>20240427</pracexamstartdt>
+				<pracpassdt>20240529</pracpassdt>
+				<pracregenddt>20240329</pracregenddt>
+				<pracregstartdt>20240326</pracregstartdt>
+			</item>
+			<item>
+				<description>기사,산업기사(2024년도 제1회)</description>
+				<docexamdt>20240215</docexamdt>
+				<docpassdt>20240313</docpassdt>
+				<docregenddt>20240210</docregenddt>
+				<docregstartdt>20240209</docregstartdt>
+				<docsubmitentdt>20240325</docsubmitentdt>
+				<docsubmitstartdt>20240215</docsubmitstartdt>
+				<pracexamenddt>20240517</pracexamenddt>
+				<pracexamstartdt>20240427</pracexamstartdt>
+				<pracpassdt>20240529</pracpassdt>
+				<pracregenddt>20240329</pracregenddt>
+				<pracregstartdt>20240326</pracregstartdt>
+			</item>
+			<item>
+				<description>기사,산업기사(2024년도 제2회)</description>
+				<docexamdt>20240509</docexamdt>
+				<docpassdt>20240605</docpassdt>
+				<docregenddt>20240419</docregenddt>
+				<docregstartdt>20240416</docregstartdt>
+				<docsubmitentdt>20240617</docsubmitentdt>
+				<docsubmitstartdt>20240509</docsubmitstartdt>
+				<pracexamenddt>20240814</pracexamenddt>
+				<pracexamstartdt>20240728</pracexamstartdt>
+				<pracpassdt>20240828</pracpassdt>
+				<pracregenddt>20240628</pracregenddt>
+				<pracregstartdt>20240625</pracregstartdt>
+			</item>
+			<item>
+				<description>기사,산업기사(2024년도 제2회)</description>
+				<docexamdt>20240509</docexamdt>
+				<docpassdt>20240605</docpassdt>
+				<docregenddt>20240504</docregenddt>
+				<docregstartdt>20240503</docregstartdt>
+				<docsubmitentdt>20240617</docsubmitentdt>
+				<docsubmitstartdt>20240509</docsubmitstartdt>
+				<pracexamenddt>20240814</pracexamenddt>
+				<pracexamstartdt>20240728</pracexamstartdt>
+				<pracpassdt>20240828</pracpassdt>
+				<pracregenddt>20240628</pracregenddt>
+				<pracregstartdt>20240625</pracregstartdt>
+			</item>
+			<item>
+				<description>기사,산업기사(2024년도 제3회)</description>
+				<docexamdt>20240705</docexamdt>
+				<docpassdt>20240807</docpassdt>
+				<docregenddt>20240621</docregenddt>
+				<docregstartdt>20240618</docregstartdt>
+				<docsubmitentdt>20240819</docsubmitentdt>
+				<docsubmitstartdt>20240705</docsubmitstartdt>
+				<pracexamenddt>20241108</pracexamenddt>
+				<pracexamstartdt>20241019</pracexamstartdt>
+				<pracpassdt>20241120</pracpassdt>
+				<pracregenddt>20240913</pracregenddt>
+				<pracregstartdt>20240910</pracregstartdt>
+			</item>
+			<item>
+				<description>기사,산업기사(2024년도 제3회)</description>
+				<docexamdt>20240705</docexamdt>
+				<docpassdt>20240807</docpassdt>
+				<docregenddt>20240630</docregenddt>
+				<docregstartdt>20240629</docregstartdt>
+				<docsubmitentdt>20240819</docsubmitentdt>
+				<docsubmitstartdt>20240705</docsubmitstartdt>
+				<pracexamenddt>20241108</pracexamenddt>
+				<pracexamstartdt>20241019</pracexamstartdt>
+				<pracpassdt>20241120</pracpassdt>
+				<pracregenddt>20240913</pracregenddt>
+				<pracregstartdt>20240910</pracregstartdt>
+			</item>
+		</items>
+	</body>
+</response>

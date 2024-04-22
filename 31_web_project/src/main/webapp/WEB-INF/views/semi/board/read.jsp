@@ -66,6 +66,7 @@
 	<div>
 		<c:forEach items="${dto.filedtolist }" var="filedto">
 		<div><a href="${pageContext.request.contextPath }/files/${filedto.savedFilePathName}" download="${filedto.orginalFileName }">${filedto.orginalFileName }</a></div>
+		<div><img src="${pageContext.request.contextPath }/files/${filedto.savedFilePathName}" ></div>
 		</c:forEach>
 	</div>
 	</c:if>
@@ -124,11 +125,7 @@ function loadedHandler(){
 	
 }
 function btnRReplyClickHandler(){
-	//Login 페이지로 이동
-	if(checkLogin("로그인되어야 글쓰기가 가능합니다.\n로그인페이지로 이동하시겠습니까?","write")){
-		return;
-	}
-	
+
 	if($(this).parents(".frm-rreply").find("[name=boardReplyContent]").val().trim().length == 0){
 		alert("입력된 글이 없습니다. 입력 후 글 등록해주세요.");
 		return;
@@ -157,11 +154,6 @@ function btnRReplyClickHandler(){
 	});
 }
 function btnReplyClickHandler(){
-	//Login 페이지로 이동
-	if(checkLogin("로그인되어야 글쓰기가 가능합니다.\n로그인페이지로 이동하시겠습니까?","write")){
-		return;
-	}
-	
 	if($("#frm-reply [name=boardReplyContent]").val().trim().length == 0){
 		alert("입력된 글이 없습니다. 입력 후 글 등록해주세요.");
 		return;
@@ -228,7 +220,14 @@ function displayReplyWrap(datalist){
 		<input type="hidden" name="boardReplyRef" value="\${replydto.boardReplyRef }">
 		<div  class="boardreply grid">
 			<div>\${replydto.boardReplyId }</div>
-			<div>\${replydto.boardReplyContent }</div>
+			<div>
+`;
+for( var i = 1; i<replydto.boardReplyLevel; i++ ){
+	htmlVal += '<span style="color:red;font-weight:bold;">ㄴ</span>';
+}
+		htmlVal += `
+			\${replydto.boardReplyContent }
+			</div>
 			<div>\${replydto.boardReplyWriteTime }</div>
 			<div>\${replydto.boardReplyWriter }</div>
 			<div><button type="button" class="btn show rreplycontent">ㄷㄷ글</button></div>

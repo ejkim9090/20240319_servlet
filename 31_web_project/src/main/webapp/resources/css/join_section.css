@@ -1,11 +1,11 @@
 
-section article {
+#section article {
     border: 1px solid black;
     padding: 10px;
     margin-bottom: 10px;
 }
 
-section article.article-1 div.flex-3.menubar {
+#section article.article-1 div.flex-3.menubar {
     display: flex;
     
     /* 오른쪽정렬 */
@@ -13,11 +13,11 @@ section article.article-1 div.flex-3.menubar {
 
     column-gap: 2px;
 }
-section article.article-1 div.flex-3.menubar > div {
+#section article.article-1 div.flex-3.menubar > div {
     border: 1px solid black;
     padding : 10px;
 }
-section article.article-1 div.flex-3.inputform {
+#section article.article-1 div.flex-3.inputform {
     display: flex;
 
     /* 양쪽정렬 */
@@ -27,39 +27,39 @@ section article.article-1 div.flex-3.inputform {
     /* 여러줄 */
     flex-wrap: wrap;
 }
-section article.article-1 div.flex-3.inputform > div {
+#section article.article-1 div.flex-3.inputform > div {
     border: 1px solid black;
 
     /* flex 자식의 최대 크기 */
     width: 49%;
 }
 
-section article.article-2 div.grid-3 {
+#section article.article-2 div.grid-3 {
     display: grid;
     grid-template-columns:1fr 1fr 1fr;
     row-gap: 20px;
     column-gap: 10px;
 }
-section article.article-2 div.grid-3.basis {
+#section article.article-2 div.grid-3.basis {
     /* grid-template-columns:1fr 2fr 1fr; */
     grid-template-columns:300px 1fr 1fr;
     /* grid-template-columns:auto auto auto; */
 }
-section article.article-2 div.grid-3  > div {
+#section article.article-2 div.grid-3  > div {
     border: 1px solid black;
 }
 
-section .flex-card-item{
+#section .flex-card-item{
     display: flex;
     flex-direction: column;
 }
 
-section .flex-card-item > .flex-icons{
+#section .flex-card-item > .flex-icons{
     display: flex;
     justify-content: space-between;
 }
 
-section .fullsizeimg{
+#section .fullsizeimg{
     /* 부모크기를 기준으로 100% */
     width: 100%;
 }
