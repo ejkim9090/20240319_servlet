@@ -5,9 +5,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,27 +42,12 @@ public class OpenApiService {
 	private String searchArg1;
 	private String searchArg2;
 	private String fileDir;
-	
- 	SimpleDateFormat today = new SimpleDateFormat("yyyyMMdd");
- 	SimpleDateFormat todayHour = new SimpleDateFormat("HH00");
-	Date now = new Date();
-	
-	String nowStr = today.format(now);
-	String nowStrHour = todayHour.format(now);
-//	StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"); /*URL*/
-//    urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=wDDeL0LFjIoRuO317GpfgOEgr%2B399wsB0qnv3gaKz6aQxDMz%2BOT9u1%2FMYEye0pW8EN9QZJdlN4cfyE2lI9SPkw%3D%3D"); /*Service Key*/
-//    urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-//    urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8")); /*한 페이지 결과 수*/
-//    urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
-//    urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(nowStr, "UTF-8")); /*‘21년 6월 28일 발표*/
-//    urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode(nowStrHour, "UTF-8")); /*06시 발표(정시단위) */
-//    urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode("55", "UTF-8")); /*예보지점의 X 좌표값*/
-//    urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode("127", "UTF-8")); /*예보지점의 Y 좌표값*/
+
 
 	public void getCommonOpenApi(String searchArg1, String searchArg2 , String fileDir) throws IOException  {
-		String basedUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst";
+		String basedUrl = "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev";
 //		String type = "json";
-//		String type = "xml";
+		String type = "xml";
 		boolean fileSaveOption = true;
 		if(fileSaveOption) {
 			this.searchArg1 = searchArg1;
@@ -75,19 +58,27 @@ public class OpenApiService {
 		prop.load(new FileReader(JdbcTemplate.class.getResource("./").getPath() + "driver.properties"));
 		System.out.println(JdbcTemplate.class.getResource("./").getPath() + "driver.properties");
 		StringBuilder urlBuilder = new StringBuilder(basedUrl); /* URL */
-		urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + "=wDDeL0LFjIoRuO317GpfgOEgr%2B399wsB0qnv3gaKz6aQxDMz%2BOT9u1%2FMYEye0pW8EN9QZJdlN4cfyE2lI9SPkw%3D%3D"); 
-	    urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-	    urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8")); /*한 페이지 결과 수*/
-	    urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
-	    urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(nowStr, "UTF-8")); /*'21년 6월 28일 발표*/
-	    urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode(nowStrHour, "UTF-8")); /*06시 발표(정시단위) */
-	    urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode("55", "UTF-8")); /*예보지점의 X 좌표값*/
-	    urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode("127", "UTF-8")); /*예보지점의 Y 좌표값*/
+		urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URLEncoder.encode(prop.getProperty("openapi.serviceKey.common"), "UTF-8")); 
+//		urlBuilder.append("&" + URLEncoder.encode("returnType", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /* xml 또는 json */
+		urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); 
+		urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); 
+		urlBuilder.append("&" + URLEncoder.encode("LAWD_CD", "UTF-8") + "=" + URLEncoder.encode(searchArg1, "UTF-8")); 
+		urlBuilder.append("&" + URLEncoder.encode("DEAL_YMD", "UTF-8") + "=" + URLEncoder.encode(searchArg2, "UTF-8")); 
 
 		System.out.println(urlBuilder.toString());
 		StringBuilder sb = send(urlBuilder, "json", fileSaveOption);
 		System.out.println(sb.toString());	
-
+		
+		
+		Map<String, Object> map = null;
+		switch(type.toLowerCase()) {
+		case "json":
+			map = getMapByJson(sb);
+			break;
+		case "xml":
+			map = getMapByXml(sb);
+			break;
+		}
 // TODO
 		
 	}
@@ -103,11 +94,9 @@ public class OpenApiService {
 		BufferedReader rd;
 		if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
 			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			//getMapByXml2(conn.getInputStream());
 		} else {
 			rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
 		}
-		
 		
 		PrintWriter bw = null;
 		System.out.println("========");
@@ -161,188 +150,69 @@ public class OpenApiService {
 
 		return map;
 	}
+
+	public Map<String, Object> getMapByXml(StringBuilder xml) throws IOException {
+		Map<String, Object> map = null;
+//		XmlMapper xmlMapper = new XmlMapper();
+//		xmlMapper.readValue(conn.getInputStream(), Map.class);
+//TODO
+		
+		return map;
+		
+		
+		
+		
+		// 방법 2 - a - conn --> InputStream --> Xml --> Document( HTMLXML) --> item 들 -->
+		// node들을 하나씩 읽기
+		// parseXML(conn.getInputStream())를 사용해 Document doc 생성
+//		Document doc = parseXML(is);
 //
-//	public Map<String, Object> getMapByXml2(HttpURLConnection conn) throws IOException {
-//		Map<String, Object> map = null;
-//		
-//		// 방법 2 - a - conn --> InputStream --> Xml --> Document( HTMLXML) --> item 들 -->
-//		// node들을 하나씩 읽기
-//		// parseXML(conn.getInputStream())를 사용해 Document doc 생성
-//		Document doc = parseXML(conn.getInputStream());
-////
-////		// item 들을 NodeList nodelist 담기
-////		NodeList nodelist = doc.getElementsByTagName("item");
+//		// item 들을 NodeList nodelist 담기
+//		NodeList nodelist = doc.getElementsByTagName("item");
+
+		
+		// 참고용
+//		List<OpenApiVo> volist = null;
+//		// item 데이터가 없다면 바로 null return;
+//		if (nodelist.getLength() < 1) {
+//			return volist;
+//		}
 //
+//		// item 데이터가 있다면
+//		volist = new ArrayList<OpenApiVo>();
 //		
-//		  NodeList nodeList = doc.getElementsByTagName("item");
-//	        List<String> wetherList = null; 
-//	        if(nodeList.getLength() < 1) {System.out.println("뽑아올 데이터가 없습니다.");}
-//	        else {
-//	        	wetherList = new ArrayList<String>();
-//	        	for(int i =0; i < nodeList.getLength(); i++) {
-//	        		String vo = null;
-//	        		Node item = nodeList.item(i);
-//	        		Node n = item.getFirstChild();
-//	        		while(n != null) {
-//	        			String nodeName = n.getNodeName();
-//	        			String nodeText = n.getTextContent();	//fcstValue
-//	        			switch (nodeText) {
-//							case "SKY":
-//								while(!(nodeName.equals("fcstValue"))) {
-//									n = n.getNextSibling();
-//								}
-//								wetherList.add(n.getTextContent());
-//								break;
-//							case "PTY":
-//								while(!(nodeName.equals("fcstValue"))) {
-//									n = n.getNextSibling();
-//								}
-//								wetherList.add(n.getTextContent());
-//								break;
-//						}
-//		        			n = n.getNextSibling();
-//	        		} 
-//      		}
-//      	}
-//	        System.out.println(wetherList.toString());
-//		
-//		// 참고용
-////		List<OpenApiVo> volist = null;
-////		// item 데이터가 없다면 바로 null return;
-////		if (nodelist.getLength() < 1) {
-////			return volist;
-////		}
-////
-////		// item 데이터가 있다면
-////		volist = new ArrayList<OpenApiVo>();
-////		
-////		for (int i = 0; i < nodelist.getLength(); i++) {
-////			OpenApiVo vo = new OpenApiVo();
-////			Node item = nodelist.item(i);
-////			Node n = item.getFirstChild();
-////			while (n != null) {
-////				String nodeName = n.getNodeName();
-////				String nodeText = n.getTextContent();
-////				System.out.println(nodeName + " : " + nodeText);
-////				switch (nodeName) {
-////				case "stationName":
-////					vo.setStationName(nodeText);
-////					break;
-////				case "dataTime":
-////					vo.setDataTime(nodeText);
-////					break;
-////				case "pm10Value":
-////					vo.setPm10Value(nodeText);
-////					break;
-////				case "so2Value":
-////					vo.setSo2Value(nodeText);
-////					break;
-////				case "so2Grade":
-////					vo.setSo2Grade(nodeText);
-////					break;
-////				}
-////				n = n.getNextSibling();
-////			}
-////			volist.add(vo);
-////		}
-////
-////		return volist;
-//	}
-//	
-//	public Map<String, Object> getMapByXml(StringBuilder xml) throws IOException {
-//		Map<String, Object> map = null;
-////		XmlMapper xmlMapper = new XmlMapper();
-////		xmlMapper.readValue(conn.getInputStream(), Map.class);
-////TODO
-//		
-////		return map;
-//		
-//		
-//		// 방법 2 - a - conn --> InputStream --> Xml --> Document( HTMLXML) --> item 들 -->
-//		// node들을 하나씩 읽기
-//		// parseXML(conn.getInputStream())를 사용해 Document doc 생성
-////		Document doc = parseXML(is);
-////
-////		// item 들을 NodeList nodelist 담기
-////		NodeList nodelist = doc.getElementsByTagName("item");
+//		for (int i = 0; i < nodelist.getLength(); i++) {
+//			OpenApiVo vo = new OpenApiVo();
+//			Node item = nodelist.item(i);
+//			Node n = item.getFirstChild();
+//			while (n != null) {
+//				String nodeName = n.getNodeName();
+//				String nodeText = n.getTextContent();
+//				System.out.println(nodeName + " : " + nodeText);
+//				switch (nodeName) {
+//				case "stationName":
+//					vo.setStationName(nodeText);
+//					break;
+//				case "dataTime":
+//					vo.setDataTime(nodeText);
+//					break;
+//				case "pm10Value":
+//					vo.setPm10Value(nodeText);
+//					break;
+//				case "so2Value":
+//					vo.setSo2Value(nodeText);
+//					break;
+//				case "so2Grade":
+//					vo.setSo2Grade(nodeText);
+//					break;
+//				}
+//				n = n.getNextSibling();
+//			}
+//			volist.add(vo);
+//		}
 //
-////		
-////		  NodeList nodeList = doc.getElementsByTagName("item");
-////	        List<String> wetherList = null; 
-////	        if(nodeList.getLength() < 1) {System.out.println("뽑아올 데이터가 없습니다.");}
-////	        else {
-////	        	wetherList = new ArrayList<String>();
-////	        	for(int i =0; i < nodeList.getLength(); i++) {
-////	        		String vo = null;
-////	        		Node item = nodeList.item(i);
-////	        		Node n = item.getFirstChild();
-////	        		while(n != null) {
-////	        			String nodeName = n.getNodeName();
-////	        			String nodeText = n.getTextContent();	//fcstValue
-////	        			switch (nodeText) {
-////							case "SKY":
-////								while(!(nodeName.equals("fcstValue"))) {
-////									n = n.getNextSibling();
-////								}
-////								wetherList.add(n.getTextContent());
-////								break;
-////							case "PTY":
-////								while(!(nodeName.equals("fcstValue"))) {
-////									n = n.getNextSibling();
-////								}
-////								wetherList.add(n.getTextContent());
-////								break;
-////						}
-////		        			n = n.getNextSibling();
-////	        		} 
-////      		}
-////      	}
-////	        System.out.println(wetherList.toString());
-//		
-//		
-//		
-//		// 참고용
-////		List<OpenApiVo> volist = null;
-////		// item 데이터가 없다면 바로 null return;
-////		if (nodelist.getLength() < 1) {
-////			return volist;
-////		}
-////
-////		// item 데이터가 있다면
-////		volist = new ArrayList<OpenApiVo>();
-////		
-////		for (int i = 0; i < nodelist.getLength(); i++) {
-////			OpenApiVo vo = new OpenApiVo();
-////			Node item = nodelist.item(i);
-////			Node n = item.getFirstChild();
-////			while (n != null) {
-////				String nodeName = n.getNodeName();
-////				String nodeText = n.getTextContent();
-////				System.out.println(nodeName + " : " + nodeText);
-////				switch (nodeName) {
-////				case "stationName":
-////					vo.setStationName(nodeText);
-////					break;
-////				case "dataTime":
-////					vo.setDataTime(nodeText);
-////					break;
-////				case "pm10Value":
-////					vo.setPm10Value(nodeText);
-////					break;
-////				case "so2Value":
-////					vo.setSo2Value(nodeText);
-////					break;
-////				case "so2Grade":
-////					vo.setSo2Grade(nodeText);
-////					break;
-////				}
-////				n = n.getNextSibling();
-////			}
-////			volist.add(vo);
-////		}
-////
-////		return volist;
-//	}
+//		return volist;
+	}
 
 	// xml to Java parse / Object
 	private Document parseXML(InputStream stream) {

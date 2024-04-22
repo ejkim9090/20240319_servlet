@@ -1,54 +1,54 @@
 /*  */
-#header nav > ul{
+header nav > ul{
     /* float - 부모 */
     overflow: hidden;
 }
-#header nav > ul > li {
+header nav > ul > li {
     /* float - width 제외 - 고정크기x content에 따라 크기*/
     float: left; 
 }
-#header nav
-, #header div.logo {
+header nav
+, header div.logo {
     /* float - 해제*/
     clear: both;
 }
-#header {
+header {
     /* position - absoulte 자식들의 기준점 */
     position: relative; height: 150px;
 }
-#header nav.tnb {
+header nav.tnb {
     /* position - absoulte 배치 */
     position: absolute; right: 0; top: 0;
 }
-#header nav.bnb {
+header nav.bnb {
     /* position - absoulte 배치 */
     position: absolute; right: 0; bottom: 0;
 }
-#header div.logo {
+header div.logo {
     /* position - absoulte 배치 */
     position: absolute; top: 20px; left: 30px;
 }
 
 /* li-a 링크 padding, border , background*/
-#header a {
+header a {
     /* 원래 inline -> inline-block 이유 : width,height,padding,margin */
     display: inline-block;
 
     border: 1px solid black;
 }
-#header li:first-child > a {
+header li:first-child > a {
     border-radius: 15px 0 0 15px;
 }
-#header li:last-child > a {
+header li:last-child > a {
     border-radius: 0 15px 15px 0;
 }
-#header .tnb a{
+header .tnb a{
     padding: 5px 10px;
 }
-#header .bnb a{
+header .bnb a{
     padding: 10px 15px;
 }
-#header a:hover{
+header a:hover{
     background-color: black;
     color: whitesmoke;
 }

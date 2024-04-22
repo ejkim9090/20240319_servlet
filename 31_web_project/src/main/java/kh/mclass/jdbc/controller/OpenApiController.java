@@ -1,10 +1,8 @@
 package kh.mclass.jdbc.controller;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import kh.mclass.jdbc.common.JdbcTemplate;
 import kh.mclass.jdbc.model.vo.OpenApiVo;
 import kh.mclass.model.service.OpenApiService;
 
@@ -36,11 +33,8 @@ public class OpenApiController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Properties prop = new Properties();
-		prop.load(new FileReader(JdbcTemplate.class.getResource("./").getPath() + "driver.properties"));
-		System.out.println(prop.getProperty("openapi.serviceKey.common"));
-		request.setAttribute("serviceKey", prop.getProperty("openapi.serviceKey.common"));
 		request.getRequestDispatcher("/WEB-INF/views/semi/openapi.jsp").forward(request, response);
+
 	}
 
 	/**
