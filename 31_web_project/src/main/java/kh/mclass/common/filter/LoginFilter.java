@@ -44,7 +44,7 @@ public class LoginFilter implements Filter{
 			}
 			// 경고 msg도 띄워주기
 			String alertMsg = "";
-			alertMsg = "&alertMsg="+URLEncoder.encode("로그인 후 이용가능합니다.","UTF-8");
+			alertMsg = "&alertMsg="+URLEncoder.encode("login.","UTF-8");
 			//리다일렉트 시킬때 원래 목적지 정보를 url 라는 파라미터 명으로 같이 보낸다.
 			res.sendRedirect(req.getContextPath() + "/login?url="+encodedUrl + alertMsg);
 		} else {

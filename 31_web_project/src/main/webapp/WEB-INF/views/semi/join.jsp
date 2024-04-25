@@ -34,7 +34,7 @@ function btnCheckidClickHandler(){
 		async : false, 
 		url : "${pageContext.request.contextPath }/checkid.ajax"
 		,method : "post"
-		,data : { cid : $("[name=id]").val(), k1:"v1", k2:"v2" }
+		,data : { cid : $("[name=id]").val() }
 		///////////// contentType 은 data의 자료형
 		
 		///////////// dataType은 success의 result 의 자료형

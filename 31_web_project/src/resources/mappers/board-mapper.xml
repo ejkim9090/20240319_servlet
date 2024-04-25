@@ -30,7 +30,7 @@
 	</select>
 	
 	<select id="selectPageList" resultType="BoardListDto" parameterType="map">
-		select BOARD_ID, SUBJECT,to_char(WRITE_TIME,'yyyy-mm-dd hh24:mi'),BOARD_WRITER,READ_COUNT 
+		select BOARD_ID, SUBJECT,to_char(WRITE_TIME,'yyyy-mm-dd hh24:mi') WRITE_TIME ,BOARD_WRITER,READ_COUNT 
 			from (select t1.*, rownum rn  
 				from (SELECT BOARD_ID, SUBJECT, WRITE_TIME, BOARD_WRITER, READ_COUNT    FROM BOARD order by board_id desc) t1 )
 		where rn between #{startRownum} and #{endRownum}
